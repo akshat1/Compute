@@ -1,0 +1,28 @@
+{
+  "name": "compute",
+  "version": "0.0.1",
+  "homepage": "https://github.com/akshat1/compute",
+  "authors": [
+    "akshat1 <akshat.sh@gmail.com>"
+  ],
+  "description": "An extremely simple reactive programming library using Knockout Observables.",
+  "main": "dist/compute-mini.js",
+  "keywords": [
+    "reactive",
+    "programming",
+    "knockout",
+    "observable"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "Compute.sublime-project",
+    "Compute.sublime-workspace",
+    "gulpfile.js",
+    "src",
+    "test",
+    "tests"
+  ]
+}
