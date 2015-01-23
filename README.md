@@ -1,7 +1,7 @@
 # Compute
-An extremely simple reactive programming library using Knockout Observables.
+An extremely simple reactive programming library using Knockout style Observables.
 
-Compute lets you describe relations between different observables (Compute will eventually have its own implementation of Observables, but it will always be compatible with Knockout). For example, 
+Compute lets you describe relations between different observables. For example,
 
     var a = Compute.o();
     var b = Compute.o();
@@ -49,11 +49,5 @@ Or, multiple observables
 
 We also have obervable arrays, and we can define from, and on from them just the same. Or use observables and observable arrays in the same expression.
 
-You will notice one can do all these things with plain knockout. However, Compute makes it much easier to define these relations, especially for multiple observables.
-
-Having defined these relations, you can simply bind your variables to your DOM using knockout bindings as usual, because 
-
-    C.o and C.from return a ko.Observable
-    C.oa returns a ko.ObservableArray
-
-
+In the browser, knockout will automatically use knockout observables (instead of Compute's implementation) if you are using knockout. Then, you can use C.o and C.oa in your knockout viewmodel because C.o and C.oa are actually ko.observable and ko.observableArray.
+Remember you 'don't have to' use knockout to use Compute.
