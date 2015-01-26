@@ -5,9 +5,11 @@ var run         = require('gulp-run');
 var runSequence = require('run-sequence');
 var clean       = require('gulp-clean');
 var uglify      = require('gulp-uglify');
+var mocha       = require('gulp-mocha');
 
 var _src  = 'src';
 var _dest = 'dist';
+var _test = 'test/**/*.js';
 
 gulp.task('mkdir-setup', function(cb) {
   var dirs = [_dest];
@@ -36,6 +38,13 @@ gulp.task('build-mini', function(){
     .pipe(gulp.dest(_dest));
 });
 
+gulp.task('test', function(){
+  return gulp.src('test/Compute.js', {read: false})
+    .pipe(mocha({
+      reporter: 'nyan'
+    }));
+});
+
 gulp.task('default', function(){
-  runSequence('build-debug', 'build-mini');
+  runSequence('build-debug', 'build-mini', 'test');
 });
