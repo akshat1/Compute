@@ -6,7 +6,8 @@ var runSequence = require('run-sequence');
 var clean       = require('gulp-clean');
 var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
-var istanbul   = require('gulp-istanbul');
+var istanbul    = require('gulp-istanbul');
+var coffeelint  = require('gulp-coffeelint');
 
 var _src  = 'src';
 var _dest = 'dist';
@@ -51,6 +52,12 @@ gulp.task('test', function(cb){
     });
 });
 
+gulp.task('lint', function () {
+  gulp.src('./src/*.coffee')
+    .pipe(coffeelint())
+    .pipe(coffeelint.reporter());
+});
+
 gulp.task('default', function(){
-  runSequence('build-debug', 'build-mini', 'test');
+  runSequence(['build-debug', 'build-mini'], ['lint', 'test']);
 });

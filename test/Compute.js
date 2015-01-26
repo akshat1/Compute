@@ -32,7 +32,7 @@ describe('#observable array', function(){
     }catch(err){
       caughtError = err;
     }
-    caughtError.toString().should.equal('Error: Argument to observable array must be null, undefined or Array');
+    (caughtError instanceof C.InvalidObservableArrayArgumentsError).should.equal(true);
   });
 
   it('tests that observable array succeeds for null input', function(){

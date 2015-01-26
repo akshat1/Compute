@@ -1,9 +1,12 @@
 # If we are in a browser, then define Compute on the window.
 C = {}
 
+class InvalidObservableArrayArgumentsError extends Error
+  constructor : ()->
+    super 'Argument to observable array must be null, undefined or Array'
+
 # One shouldn't have to use knockout, awesome as it is, just for observables.
-# These will be used when there is no knockout. If knockout is present, we simply will
-# ko.observable (in C.o, C.oa)
+# The following will be used (only) when knockout is not present.
 
 Observable = (val) ->
   _value = val
@@ -33,7 +36,8 @@ Observable = (val) ->
 
 ObservableArray = (arr)->
   _value = arr or []
-  throw new Error('Argument to observable array must be null, undefined or Array') unless _value instanceof Array
+  unless _value instanceof Array
+    throw new InvalidObservableArrayArgumentsError()
 
   subscriptions = []
 
@@ -111,9 +115,9 @@ C.on = (observables..., f)->
 
   o.subscribe func for o in observables
 
-  $fire: func
-  $stop: ()-> isStopped = true
-  $resume: ()-> isStopped = false
+  $fire   : func
+  $stop   : ()-> isStopped = true
+  $resume : ()-> isStopped = false
 
 
 C.from = (observables..., f)->
@@ -136,6 +140,7 @@ C._gather         = _gather
 C._isValid        = _isValid
 C.Observable      = Observable
 C.ObservableArray = ObservableArray
+C.InvalidObservableArrayArgumentsError = InvalidObservableArrayArgumentsError
 
 # If we are in node (which we will be, eventually)
 if typeof window isnt 'undefined'
