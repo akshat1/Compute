@@ -6,6 +6,7 @@ var runSequence = require('run-sequence');
 var clean       = require('gulp-clean');
 var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
+var istanbul   = require('gulp-istanbul');
 
 var _src  = 'src';
 var _dest = 'dist';
@@ -38,11 +39,16 @@ gulp.task('build-mini', function(){
     .pipe(gulp.dest(_dest));
 });
 
-gulp.task('test', function(){
-  return gulp.src('test/Compute.js', {read: false})
-    .pipe(mocha({
-      reporter: 'nyan'
-    }));
+gulp.task('test', function(cb){
+  gulp.src(_dest + '/**/*.js')
+    .pipe(istanbul())
+    .pipe(istanbul.hookRequire())
+    .on('finish', function(){
+      gulp.src('test/*.js')
+      .pipe(mocha())
+      .pipe(istanbul.writeReports())
+      .on('end', cb);
+    });
 });
 
 gulp.task('default', function(){
