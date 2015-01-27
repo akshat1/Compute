@@ -21,6 +21,7 @@
     "Compute.sublime-project",
     "Compute.sublime-workspace",
     "gulpfile.js",
+    "package.json",
     "src",
     "test",
     "tests"
