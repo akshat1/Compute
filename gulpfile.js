@@ -8,56 +8,73 @@ var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
 var istanbul    = require('gulp-coffee-istanbul');
 var coffeelint  = require('gulp-coffeelint');
+var path        = require('path');
 require('coffee-script/register');
 
-var _src  = 'src';
-var _dest = 'dist';
-var _test = 'test/**/*.js';
+var MiniFileName  = 'compute-mini.js';
+var DebugFileName = 'compute-debug.js';
+
+var DirSource   = 'src';
+var DirDist     = 'dist';
+var DirTest     = 'test';
+var DirCoverage = 'coverage';
+var Source    = path.join(DirSource, '**', '*.coffee');
+var DestMini  = path.join(DirDist, MiniFileName);
+var DestDebug = path.join(DirDist, DebugFileName);
+var Test      = path.join(DirTest, '**', '*.coffee');
+
+
 
 gulp.task('mkdir-setup', function(cb) {
-  var dirs = [_dest];
+  var dirs = [DirDist];
   return run('mkdir -p ' + dirs.join(' ')).exec(cb);
 });
 
+
 gulp.task('clean', function(){
-  return gulp.src(_dest)
+  return gulp.src([DirDist, DirCoverage])
     .pipe(clean());
 });
 
+
 gulp.task('build-debug', function(){
-  return gulp.src(_src + '/**/*.coffee')
+  return gulp.src(Source)
     .pipe(coffee())
-    .pipe(rename('compute-debug.js'))
-    .pipe(gulp.dest(_dest));
+    .pipe(rename(DebugFileName))
+    .pipe(gulp.dest(DirDist));
 });
 
+
 gulp.task('build-mini', function(){
-  return gulp.src(_src + '/**/*.coffee')
+  return gulp.src(Source)
     .pipe(coffee())
     .pipe(uglify({
       compress: true
     }))
-    .pipe(rename('compute-mini.js'))
-    .pipe(gulp.dest(_dest));
+    .pipe(rename(MiniFileName))
+    .pipe(gulp.dest(DirDist));
 });
 
+
 gulp.task('test', function(cb){
-  gulp.src('src/**/*.coffee')
+  gulp.src(Source)
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', function(){
-      gulp.src('test/*.coffee')
+      gulp.src(Test)
       .pipe(mocha())
       .pipe(istanbul.writeReports())
       .on('end', cb)
     });
 });
 
+
 gulp.task('lint', function () {
-  gulp.src('./src/*.coffee')
+  gulp.src(Source)
     .pipe(coffeelint())
     .pipe(coffeelint.reporter());
 });
+
 
 gulp.task('default', function(){
   runSequence('lint', 'test', ['build-debug', 'build-mini']);
