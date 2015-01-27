@@ -1,8 +1,8 @@
 {
-  "name": "react-compute",
+  "name": "simian-compute",
   "description": "A simple reactive programming library.",
   "author": "akshat1",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "bugs": {
     "url": "https://github.com/akshat1/compute/issues",
     "email": "akshat.sh@gmail.com"
@@ -11,16 +11,14 @@
     "type": "git",
     "url": "https://github.com/akshat1/compute"
   },
-  "dependencies": {
-    "knockout": "^3.2.0"
-  },
   "devDependencies": {
     "chai": "^1.10.0",
+    "coffee-script": "^1.8.0",
     "gulp": "^3.8.10",
     "gulp-clean": "^0.3.1",
     "gulp-coffee": "^2.2.0",
+    "gulp-coffee-istanbul": "^0.6.0",
     "gulp-coffeelint": "^0.4.0",
-    "gulp-istanbul": "^0.5.0",
     "gulp-mocha": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-run": "^1.6.6",

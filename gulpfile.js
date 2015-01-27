@@ -6,8 +6,9 @@ var runSequence = require('run-sequence');
 var clean       = require('gulp-clean');
 var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
-var istanbul    = require('gulp-istanbul');
+var istanbul    = require('gulp-coffee-istanbul');
 var coffeelint  = require('gulp-coffeelint');
+require('coffee-script/register');
 
 var _src  = 'src';
 var _dest = 'dist';
@@ -41,14 +42,14 @@ gulp.task('build-mini', function(){
 });
 
 gulp.task('test', function(cb){
-  gulp.src(_dest + '/**/*.js')
+  gulp.src('src/**/*.coffee')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', function(){
-      gulp.src('test/*.js')
+      gulp.src('test/*.coffee')
       .pipe(mocha())
       .pipe(istanbul.writeReports())
-      .on('end', cb);
+      .on('end', cb)
     });
 });
 
@@ -59,5 +60,5 @@ gulp.task('lint', function () {
 });
 
 gulp.task('default', function(){
-  runSequence(['build-debug', 'build-mini'], ['lint', 'test']);
+  runSequence('lint', 'test', ['build-debug', 'build-mini']);
 });
