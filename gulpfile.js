@@ -23,9 +23,9 @@ var DirDocumentation = 'documentation'
 var Source    = path.join(DirSource, '**', '*.coffee');
 var DestMini  = path.join(DirDist, MiniFileName);
 var DestDebug = path.join(DirDist, DebugFileName);
-var Documentation = path.join(DirDist, DirDocumentation);
+var Documentation = DirDocumentation;
 var Test      = path.join(DirTest, '**', '*.coffee');
-var Coverage  = path.join(DirDist, DirCoverage);
+var Coverage  = DirCoverage;
 
 gulp.task('mkdir-setup', function(cb) {
   var dirs = [DirDist];
@@ -34,7 +34,7 @@ gulp.task('mkdir-setup', function(cb) {
 
 
 gulp.task('clean', function(){
-  return gulp.src([DirDist, Coverage])
+  return gulp.src([DirDist, Coverage, Coverage])
     .pipe(clean());
 });
 
