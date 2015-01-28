@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Compute</title>
+  <meta name="description" content="An extremely simple reactive programming library using Knockout Observables.">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Compute</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">An extremely simple reactive programming library using Knockout Observables.</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/akshat1/compute/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/akshat1/compute/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/akshat1/compute" class="code">View Compute on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h1>
+<a id="compute" class="anchor" href="#compute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compute</h1>
+
+<p>An extremely simple reactive programming library using Knockout style Observables.</p>
+
+<p>Compute lets you describe relations between different observables. For example,</p>
+
+<pre><code>var a = Compute.o();
+var b = Compute.o();
+var c = Compute.from(a, b, function(a1, b1){
+  return Math.sqrt(a*a + b*b)
+});
+a(3);
+b(4);
+console.log(c());   // 5
+</code></pre>
+
+<p>Now we change a, b</p>
+
+<pre><code>a(5);
+b(12);
+console.log(c());   //13
+</code></pre>
+
+<p>To stop c from being updated, we need to call</p>
+
+<p>c.$stop();</p>
+
+<p>Now remember knockout subscriptions are only triggered when the value of an observable changes. To force a relation to calculate immediately, we can call $fire like so</p>
+
+<pre><code>var x = C.o(7);
+var y = C.o(22);
+var z = C.from(x, y function(x1, y1){
+  return y1/x1;
+});
+z(); //undefined, because neither x nor y have changed
+z.$fire();
+z(); //3.14 .... blah ....
+</code></pre>
+
+<p>We can also tell Compute to execute a function everytime an observable changes.</p>
+
+<pre><code>Compute.on(c, function(c1){
+  console.log("C just got set to " + c1);
+});
+</code></pre>
+
+<p>Or, multiple observables</p>
+
+<pre><code>Compute.on(a, b, c, function(a1, b1, c1){
+  console.log(a1 + "^2 + " + b1 + "^2 = " + c1 + "^2");
+});
+</code></pre>
+
+<p>We also have obervable arrays, and we can define from, and on from them just the same. Or use observables and observable arrays in the same expression.</p>
+
+<p>In the browser, knockout will automatically use knockout observables (instead of Compute's implementation) if you are using knockout. Then, you can use C.o and C.oa in your knockout viewmodel because C.o and C.oa are actually ko.observable and ko.observableArray.</p>
+
+<p>Remember you 'don't have to' use knockout to use Compute.</p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/akshat1" class="avatar"><img src="https://avatars1.githubusercontent.com/u/1529776?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/akshat1">akshat1</a> maintains <a href="https://github.com/akshat1/compute">Compute</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/akshat1/compute/tarball/master" class="tar">tar</a><a href="https://github.com/akshat1/compute/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
