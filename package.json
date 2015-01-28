@@ -2,7 +2,7 @@
   "name": "simian-compute",
   "description": "A simple reactive programming library.",
   "author": "akshat1",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "bugs": {
     "url": "https://github.com/akshat1/compute/issues",
     "email": "akshat.sh@gmail.com"

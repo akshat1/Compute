@@ -1,21 +1,21 @@
 (function() {
-  var C, InvalidObservableArrayArgumentsError, Observable, ObservableArray, _gather, _isObservable, _isValid, _unwrap,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  var C, MSGInvalidArgumentsToObservableArray, Observable, ObservableArray, err, ko, _gather, _isObservable, _isValid, _unwrap,
     __slice = [].slice;
 
   C = {};
 
-  InvalidObservableArrayArgumentsError = (function(_super) {
-    __extends(InvalidObservableArrayArgumentsError, _super);
+  MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
 
-    function InvalidObservableArrayArgumentsError() {
-      InvalidObservableArrayArgumentsError.__super__.constructor.call(this, 'Argument to observable array must be null, undefined or Array');
+  if (typeof window !== 'undefined') {
+    window.Compute = C;
+  } else if (module) {
+    try {
+      ko = require('knockout');
+    } catch (_error) {
+      err = _error;
     }
-
-    return InvalidObservableArrayArgumentsError;
-
-  })(Error);
+    module.exports = C;
+  }
 
   Observable = function(val) {
     var callSubscribers, o, subscriptions, _value;
@@ -53,7 +53,8 @@
     var callSubscribers, o, subscriptions, _value;
     _value = arr || [];
     if (!(_value instanceof Array)) {
-      throw new InvalidObservableArrayArgumentsError();
+      console.log("\n\n\n SNAP : 0 \n" + MSGInvalidArgumentsToObservableArray + "\n\n");
+      throw new Error(MSGInvalidArgumentsToObservableArray);
     }
     subscriptions = [];
     callSubscribers = function() {
@@ -86,9 +87,6 @@
       callSubscribers();
       return v;
     };
-    o.peek = function() {
-      return _value[_value.length - 1];
-    };
     o._isObservable = true;
     return o;
   };
@@ -97,7 +95,7 @@
     if (typeof ko !== 'undefined') {
       return ko.isObservable(v);
     } else {
-      return v._isObservable;
+      return v._isObservable || false;
     }
   };
 
@@ -110,17 +108,12 @@
   };
 
   _isValid = function(observables, func) {
-    var o;
-    if (!(function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = observables.length; _i < _len; _i++) {
-        o = observables[_i];
-        _results.push(_isObservable(o));
+    var o, _i, _len;
+    for (_i = 0, _len = observables.length; _i < _len; _i++) {
+      o = observables[_i];
+      if (!_isObservable(o)) {
+        return false;
       }
-      return _results;
-    })()) {
-      return false;
     }
     if (_isObservable(func)) {
       return false;
@@ -189,7 +182,7 @@
     var f, func, isStopped, newOb, o, observables, _i, _j, _len;
     observables = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), f = arguments[_i++];
     if (!_isValid(observables, f)) {
-      throw new Error('Invalid arguments to C.on');
+      throw new Error('Invalid arguments to C.from');
     }
     newOb = C.o();
     isStopped = false;
@@ -220,16 +213,12 @@
 
   C._isValid = _isValid;
 
+  C._isObservable = _isObservable;
+
+  C._unwrap = _unwrap;
+
   C.Observable = Observable;
 
   C.ObservableArray = ObservableArray;
-
-  C.InvalidObservableArrayArgumentsError = InvalidObservableArrayArgumentsError;
-
-  if (typeof window !== 'undefined') {
-    window.Compute = C;
-  } else if (module) {
-    module.exports = C;
-  }
 
 }).call(this);

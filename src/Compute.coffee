@@ -1,9 +1,20 @@
-# If we are in a browser, then define Compute on the window.
 C = {}
 
-class InvalidObservableArrayArgumentsError extends Error
-  constructor : ()->
-    super 'Argument to observable array must be null, undefined or Array'
+MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.'
+
+# If we are in node (which we will be, eventually)
+if typeof window isnt 'undefined'
+  window.Compute = C
+else if module
+  # We are running in node
+  # Try to load knockout.
+  try
+    ko = require 'knockout'
+  catch err
+    # Eat the exception. We have our own observables implementation.
+
+  module.exports = C
+
 
 # One shouldn't have to use knockout, awesome as it is, just for observables.
 # The following will be used (only) when knockout is not present.
@@ -37,7 +48,8 @@ Observable = (val) ->
 ObservableArray = (arr)->
   _value = arr or []
   unless _value instanceof Array
-    throw new InvalidObservableArrayArgumentsError()
+    console.log "\n\n\n SNAP : 0 \n#{MSGInvalidArgumentsToObservableArray}\n\n"
+    throw new Error MSGInvalidArgumentsToObservableArray
 
   subscriptions = []
 
@@ -64,9 +76,6 @@ ObservableArray = (arr)->
     callSubscribers()
     v
 
-  o.peek = ()->
-    _value[_value.length - 1]
-
   o._isObservable = true
 
   o
@@ -76,14 +85,15 @@ _isObservable = (v)->
   if typeof ko isnt 'undefined'
     ko.isObservable v
   else
-    v._isObservable
+    v._isObservable or false
 
 
 _unwrap = (v)-> if _isObservable v then v() else v
 
 
 _isValid = (observables, func)->
-  return false unless _isObservable(o) for o in observables
+  for o in observables
+    return false unless _isObservable(o)
   return false if _isObservable(func)
   return false unless typeof func is 'function'
   true
@@ -107,7 +117,8 @@ C.oa = (arr)->
 
 
 C.on = (observables..., f)->
-  throw new Error 'Invalid arguments to C.on' unless _isValid observables, f
+  unless _isValid observables, f
+    throw new Error 'Invalid arguments to C.on'
   isStopped = false
   func = ()->
     return if isStopped
@@ -121,7 +132,8 @@ C.on = (observables..., f)->
 
 
 C.from = (observables..., f)->
-  throw new Error 'Invalid arguments to C.on' unless _isValid observables, f
+  unless _isValid observables, f
+    throw new Error 'Invalid arguments to C.from'
   newOb = C.o()
   isStopped = false
   func = ()->
@@ -138,12 +150,7 @@ C.from = (observables..., f)->
 
 C._gather         = _gather
 C._isValid        = _isValid
+C._isObservable   = _isObservable
+C._unwrap         = _unwrap
 C.Observable      = Observable
 C.ObservableArray = ObservableArray
-C.InvalidObservableArrayArgumentsError = InvalidObservableArrayArgumentsError
-
-# If we are in node (which we will be, eventually)
-if typeof window isnt 'undefined'
-  window.Compute = C
-else if module
-  module.exports = C
