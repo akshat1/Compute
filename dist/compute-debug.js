@@ -6,15 +6,28 @@
 
   MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
 
+
+  /*
+  Test whether we are running in a browser. If so, we'll define Compute on the
+  window object. Otherwise, assume we are in Node and we'll export Compute via
+  module.exports. Also, try to load knockout and silently fall back to using
+  our own observables if knockout is not installed.
+   */
+
   if (typeof window !== 'undefined') {
     window.Compute = C;
   } else if (module) {
+    module.exports = C;
     try {
       ko = require('knockout');
     } catch (_error) {
       err = _error;
+
+      /*
+      KO not found. We'll eat the exception and use our own observables
+      implementation.
+       */
     }
-    module.exports = C;
   }
 
   Observable = function(val) {
@@ -53,7 +66,6 @@
     var callSubscribers, o, subscriptions, _value;
     _value = arr || [];
     if (!(_value instanceof Array)) {
-      console.log("\n\n\n SNAP : 0 \n" + MSGInvalidArgumentsToObservableArray + "\n\n");
       throw new Error(MSGInvalidArgumentsToObservableArray);
     }
     subscriptions = [];
@@ -134,6 +146,15 @@
     return values;
   };
 
+
+  /*
+  Usage:
+    x = Compute.o 'foo'
+    console.log x()      //foo
+    x 'bar'
+    console.log x()      //bar
+   */
+
   C.o = function(val) {
     if (typeof ko !== 'undefined') {
       return ko.observable(val);
@@ -142,6 +163,15 @@
     }
   };
 
+
+  /*
+  Usage:
+    x = Compute.o ['foo', 'bar']
+    console.log x()      //['foo', 'bar']
+    x.push 'bar'
+    console.log x()      //['foo', 'bar', 'baz']
+   */
+
   C.oa = function(arr) {
     if (typeof ko !== 'undefined') {
       return ko.observableArray(arr);
@@ -149,6 +179,23 @@
       return ObservableArray(arr);
     }
   };
+
+
+  /*
+  Execute function 'f' when any of the observables change. Pass observable values
+  as arguments.
+  
+  Usage:
+    C.on obs1, obs2, obs3, (o1, o2, o3)->
+      console.log "One of the observables changed!"
+  
+  grab the on like so
+    t = C.on .....
+  
+  Call t.$stop() to ignore subsequent observable mutations. Call t.$resume() to
+  resume. Call $fire() to force executing f with current values of all
+  observables.
+   */
 
   C.on = function() {
     var f, func, isStopped, o, observables, _i, _j, _len;
@@ -177,6 +224,25 @@
       }
     };
   };
+
+
+  /*
+  Define a new observable, whose value is the value returned by the function 'f'
+  when 'f' called with the values of all observables.
+  
+  This new observable is updated every time one of the observables mutate.
+  
+  Usage:
+    C.on obs1, obs2, obs3, (o1, o2, o3)->
+      console.log "One of the observables changed!"
+  
+  grab the on like so
+    t = C.on .....
+  
+  Call t.$stop() to ignore subsequent observable mutations. Call t.$resume() to
+  resume. Call $fire() to force executing f with current values of all
+  observables.
+   */
 
   C.from = function() {
     var f, func, isStopped, newOb, o, observables, _i, _j, _len;
