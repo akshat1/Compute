@@ -1,0 +1,5 @@
+.DS_Store
+compute.sublime-workspace
+src
+node_modules
+*.log
