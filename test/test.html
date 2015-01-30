@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Compute: Smoke Test</title>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js'></script>
+    <script src='../dist/compute-debug.js'></script>
+    <script>
+      console.log('Blah');
+      console.log(window.Compute);
+      console.log(window.ko);
+      var demoFunc = function(){
+          console.log("DOMContentLoaded");
+          var C = window.Compute;
+          var x = C.o(1);
+          var y = C.o(1);
+          var op = C.o('+');
+          var z = C.from(x, op, y, function(o1, opr, o2){
+              o1 = Number(o1).valueOf();
+              o2 = Number(o2).valueOf();
+              switch(opr){
+                  case '+': return o1 + o2;
+                  case '-': return o1 - o2;
+                  case 'x': return o1 * o2;
+                  case '%': return o1 / o2;
+                  default : return '-';
+              }
+          });
+          z.$fire();
+
+          var vm = {
+            x  : x,
+            y  : y,
+            op : op,
+            z  : z,
+            operators: ['+', '-', '%', 'x']
+          };
+          window._vm = vm;
+          ko.applyBindings(vm);
+      }
+
+      document.addEventListener('DOMContentLoaded', demoFunc);
+    </script>
+  </head>
+  <body>
+    <table id='stage'>
+      <tr>
+          <td>X</td>
+          <td>Op.</td>
+          <td>Y</td>
+          <td>=</td>
+          <td>Result</td>
+      </tr>
+      <tr>
+          <td><input size='3' data-bind="value: x, valueUpdate: 'keyup'"/></td>
+          <td><select data-bind='value: op, options: operators'/></td>
+          <td><input size='3' data-bind="value: y, valueUpdate: 'keyup'"/></td>
+          <td> = </td>
+          <td><input size='5' data-bind="value: z" disabled='disabled'/></td>
+      </tr>
+    </table>
+  </body>
+</html>

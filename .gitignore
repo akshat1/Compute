@@ -1,5 +1,7 @@
-.DS_Store
+.DS_STORE
 compute.sublime-workspace
-src
+compute.sublime-project
 node_modules
-*.log
+npm-debug.log
+coverage
+documentation
