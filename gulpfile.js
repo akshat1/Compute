@@ -8,8 +8,10 @@ var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
 var istanbul    = require('gulp-coffee-istanbul');
 var coffeelint  = require('gulp-coffeelint');
+var docco       = require('gulp-docco');
+var replace     = require('gulp-replace');
 var path        = require('path');
-var docco       = require("gulp-docco");
+var fs          = require('fs');
 require('coffee-script/register');
 
 var MiniFileName  = 'compute-mini.js';
@@ -27,6 +29,13 @@ var Documentation = DirDocumentation;
 var Test      = path.join(DirTest, '**', '*.coffee');
 var Coverage  = DirCoverage;
 
+
+var COMPUTE_VERSION_PATTERN = '%%%COMPUTE_VERSION%%%';
+function getVersion(){
+  return JSON.parse(fs.readFileSync('package.json', {'encoding':'utf8'})).version;
+}
+
+
 gulp.task('mkdir-setup', function(cb) {
   var dirs = [DirDist];
   run('mkdir -p ' + dirs.join(' ')).exec(cb);
@@ -41,6 +50,7 @@ gulp.task('clean', function(){
 
 gulp.task('build-debug', function(){
   return gulp.src(Source)
+    .pipe(replace(COMPUTE_VERSION_PATTERN, getVersion()))
     .pipe(coffee())
     .pipe(rename(DebugFileName))
     .pipe(gulp.dest(DirDist));
@@ -49,6 +59,7 @@ gulp.task('build-debug', function(){
 
 gulp.task('build-mini', function(){
   return gulp.src(Source)
+    .pipe(replace(COMPUTE_VERSION_PATTERN, getVersion()))
     .pipe(coffee())
     .pipe(uglify({
       compress: true

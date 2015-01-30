@@ -2,7 +2,9 @@
   var C, MSGInvalidArgumentsToObservableArray, Observable, ObservableArray, err, ko, _gather, _isObservable, _isValid, _unwrap,
     __slice = [].slice;
 
-  C = {};
+  C = {
+    version: '0.0.6'
+  };
 
   MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
 
@@ -16,6 +18,7 @@
 
   if (typeof window !== 'undefined') {
     window.Compute = C;
+    ko = window.ko;
   } else if (module) {
     module.exports = C;
     try {

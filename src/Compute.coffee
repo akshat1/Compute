@@ -1,4 +1,6 @@
-C = {}
+C =
+  version : '%%%COMPUTE_VERSION%%%'
+
 
 MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.'
 
@@ -12,6 +14,7 @@ our own observables if knockout is not installed.
 ###
 if typeof window isnt 'undefined'
   window.Compute = C
+  ko = window.ko
 else if module
   module.exports = C
 
