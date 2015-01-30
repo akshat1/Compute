@@ -9,8 +9,11 @@ MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an
 ###
 Test whether we are running in a browser. If so, we'll define Compute on the
 window object. Otherwise, assume we are in Node and we'll export Compute via
-module.exports. Also, try to load knockout and silently fall back to using
-our own observables if knockout is not installed.
+module.exports.
+
+Also, try to grab knockout from the window (if present), or
+require('knockout') if in node. Silently fall back to using our own
+observables if knockout is not installed.
 ###
 if typeof window isnt 'undefined'
   window.Compute = C
