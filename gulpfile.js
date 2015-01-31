@@ -69,7 +69,7 @@ gulp.task('build-mini', function(){
 });
 
 
-gulp.task('test', function(cb){
+gulp.task('test-inner', function(cb){
   gulp.src(Source)
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
@@ -96,7 +96,12 @@ gulp.task('document', function(){
     .pipe(gulp.dest(Documentation));
 });
 
+gulp.task('test', function(){
+  runSequence('lint', 'test-inner');
+});
+
+//'lint', 'test', 'document'
 
 gulp.task('default', function(){
-  runSequence('lint', 'test', 'document', ['build-debug', 'build-mini']);
+  runSequence(['build-debug', 'build-mini']);
 });

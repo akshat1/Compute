@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/akshat1/compute"
   },
+  "scripts": {
+    "test": "gulp test"
+  },
   "devDependencies": {
     "chai": "^1.10.0",
     "coffee-script": "^1.8.0",
