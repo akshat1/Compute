@@ -1,4 +1,4 @@
-# Compute
+# Compute [![Build Status](https://travis-ci.org/akshat1/compute.svg?branch=master)](https://travis-ci.org/akshat1/compute)
 An extremely simple reactive programming library using Knockout style Observables.
 
 Compute lets you describe relations between different observables. For example,
