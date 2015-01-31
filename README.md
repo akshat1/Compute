@@ -51,3 +51,5 @@ We also have obervable arrays, and we can define from, and on from them just the
 
 In the browser, Compute will automatically use knockout observables (instead of Compute's implementation) if you are using knockout. Then, you can use C.o and C.oa in your knockout viewmodel because C.o and C.oa are actually ko.observable and ko.observableArray.
 Remember you 'don't have to' use knockout to use Compute.
+
+Compute loves the awesome Travis-CI.
