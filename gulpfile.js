@@ -103,5 +103,5 @@ gulp.task('test', function(){
 //'lint', 'test', 'document'
 
 gulp.task('default', function(){
-  runSequence(['build-debug', 'build-mini']);
+  runSequence('test', ['build-debug', 'build-mini']);
 });
