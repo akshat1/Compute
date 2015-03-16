@@ -28,7 +28,7 @@ Now remember knockout subscriptions are only triggered when the value of an obse
 
     var x = C.o(7);
     var y = C.o(22);
-    var z = C.from(x, y function(x1, y1){
+    var z = C.from(x, y, function(x1, y1){
       return y1/x1;
     });
     z(); //undefined, because neither x nor y have changed
