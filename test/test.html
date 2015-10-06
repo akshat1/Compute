@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Compute: Smoke Test</title>
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js'></script>
+    <!-- script src='http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js'></script -->
     <script src='../dist/compute-debug.js'></script>
     <script>
       console.log('Blah');
@@ -35,7 +35,7 @@
             operators: ['+', '-', '%', 'x']
           };
           window._vm = vm;
-          ko.applyBindings(vm);
+          //ko.applyBindings(vm);
       }
 
       document.addEventListener('DOMContentLoaded', demoFunc);
