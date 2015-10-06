@@ -7,18 +7,18 @@ expect = chai.expect
 #TODO: _isValid, _gather
 #TODO: $stop, $resume
 
-describe '#_isObservable', ()->
+describe '#isObservable', ()->
   it 'tests that isObservable should be true for an observable', ()->
     obs = C.o 'foo'
-    C._isObservable(obs).should.equal true
+    C.isObservable(obs).should.equal true
     return
 
   it 'tests that isObservable should be false for a non-observable', ()->
     nonObs = 'bar'
-    C._isObservable(nonObs).should.equal false
+    C.isObservable(nonObs).should.equal false
 
     nonObs = 3
-    C._isObservable(nonObs).should.equal false
+    C.isObservable(nonObs).should.equal false
     return
 
   return

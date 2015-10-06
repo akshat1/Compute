@@ -1,17 +1,17 @@
 var gulp        = require("gulp");
 var rename      = require("gulp-rename");
 var coffee      = require('gulp-coffee');
-var run         = require('gulp-run');
-var runSequence = require('run-sequence');
-var clean       = require('gulp-clean');
+//var run         = require('gulp-run');
+//var runSequence = require('run-sequence');
+var del         = require('del');
 var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
 var istanbul    = require('gulp-coffee-istanbul');
 var coffeelint  = require('gulp-coffeelint');
-var docco       = require('gulp-docco');
 var replace     = require('gulp-replace');
 var path        = require('path');
 var fs          = require('fs');
+var jsdoc       = require('gulp-jsdoc');
 require('coffee-script/register');
 
 var MiniFileName  = 'compute-mini.js';
@@ -35,16 +35,15 @@ function getVersion(){
   return JSON.parse(fs.readFileSync('package.json', {'encoding':'utf8'})).version;
 }
 
-
+/*
 gulp.task('mkdir-setup', function(cb) {
   var dirs = [DirDist];
   run('mkdir -p ' + dirs.join(' ')).exec(cb);
 });
-
+*/
 
 gulp.task('clean', function(){
-  return gulp.src([DirDist, Coverage, Coverage])
-    .pipe(clean());
+  return del([DirDist, Coverage, Documentation]);
 });
 
 
@@ -90,18 +89,15 @@ gulp.task('lint', function () {
     .pipe(coffeelint.reporter());
 });
 
-gulp.task('document', function(){
-  return gulp.src(Source)
-    .pipe(docco({}))
-    .pipe(gulp.dest(Documentation));
+gulp.task('document', ['build-debug'], function(){
+  var sourcePath = path.join(DirDist, '*debug.js');
+  console.log(sourcePath, '-->', Documentation);
+  return gulp.src(sourcePath)
+    .pipe(jsdoc(Documentation));
 });
 
-gulp.task('test', function(){
-  runSequence('lint', 'test-inner');
-});
+gulp.task('test', ['lint', 'test-inner']);
 
 //'lint', 'test', 'document'
 
-gulp.task('default', function(){
-  runSequence('test', ['build-debug', 'build-mini']);
-});
+gulp.task('default', ['build-debug', 'build-mini']);
