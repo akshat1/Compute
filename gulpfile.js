@@ -29,6 +29,8 @@ var Documentation = DirDocumentation;
 var Test      = path.join(DirTest, '**', '*.coffee');
 var Coverage  = DirCoverage;
 
+var webserver = require('gulp-webserver');
+
 
 var COMPUTE_VERSION_PATTERN = '%%%COMPUTE_VERSION%%%';
 function getVersion(){
@@ -99,5 +101,10 @@ gulp.task('document', ['build-debug'], function(){
 gulp.task('test', ['lint', 'test-inner']);
 
 //'lint', 'test', 'document'
+
+gulp.task('webserver', function() {
+  gulp.src('./')
+    .pipe(webserver());
+});
 
 gulp.task('default', ['build-debug', 'build-mini']);
