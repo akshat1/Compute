@@ -16,7 +16,6 @@
     var ko,
         observable,
         observableArray,
-        computeObservableCall,
         computeObservable,
         isObservable,
         on,
@@ -80,7 +79,7 @@
         }
       }
 
-      computeObservableCall = function computeObservableCall(state, newValue) {
+      C._computeObservableCall = function _computeObservableCall(state, newValue) {
         if(typeof newValue === 'undefined')
           return state.value;
 
@@ -104,7 +103,7 @@
         };
 
         var result = function (newValue) {
-          return Compute.computeObservableCall(state, newValue);
+          return C._computeObservableCall(state, newValue);
         }
 
         result.state = state;
@@ -271,7 +270,6 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['_computeObservableCall']  = computeObservableCall;
      exports['_computeObservable']      = computeObservable;
      exports['isObservable']            = isObservable;
      exports['Observable']              = observable;

@@ -167,14 +167,14 @@ describe('Compute', function() {
     });
 
     it('should return a function which calls computeObservableCall', function() {
-      var tmp = Compute.computeObservableCall;
-      var spy = Compute.computeObservableCall = sinon.spy();
+      var tmp = Compute._computeObservableCall;
+      var spy = Compute._computeObservableCall = sinon.spy();
       var newValue = 34;
       var observable = Compute._computeObservable();
       observable(newValue);
       spy.callCount.should.equal(1);
       spy.calledWithExactly(observable.state, newValue);
-      Compute.computeObservableCall = tmp;
+      Compute._computeObservableCall = tmp;
     });
 
     it('should return a result with subscribe function, which calls computeSubscribe', function() {
