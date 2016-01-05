@@ -16,7 +16,6 @@
     var ko,
         observable,
         observableArray,
-        isObservable,
         on,
         from;
 
@@ -45,7 +44,7 @@
         return ko.observableArray(value);
       };
 
-      isObservable = function isObservableProxy(obj) {
+      C.isObservable = function isObservableProxy(obj) {
         return ko.isObservable(obj);
       }
 
@@ -56,7 +55,7 @@
 
     function noKnockoutFound() {
       // No knockout. Use our own observables.
-      isObservable = function computeIsObservable(obj) {
+      C.isObservable = function computeIsObservable(obj) {
         return obj._isObservable || false;
       }
 
@@ -165,14 +164,14 @@
      * @returns {boolean}
      */
     C._isValid = function _isValid(observables, func) {
-      if (isObservable(func))
+      if (C.isObservable(func))
         return false;
 
       if (typeof func !== 'function')
         return false;
 
       for (var i = 0, len = observables.length; i < len; i++) {
-        if (!isObservable(observables[i]))
+        if (!C.isObservable(observables[i]))
           return false;
       }
 
@@ -269,7 +268,6 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['isObservable']            = isObservable;
      exports['Observable']              = observable;
      exports['ObservableArray']         = observableArray;
      exports['o']                       = observable;
