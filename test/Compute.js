@@ -120,12 +120,12 @@ describe('Compute', function() {
         value: newValue
       };
 
-      var tmp = Compute.computeCallSubscribers;
-      var spy = Compute.computeCallSubscribers = sinon.spy();
+      var tmp = Compute._computeCallSubscribers;
+      var spy = Compute._computeCallSubscribers = sinon.spy();
       Compute._computeObservableCall(state, newValue);
       spy.callCount.should.equal(1);
       spy.calledWith(newState).should.be.true;
-      Compute.computeCallSubscribers = tmp;
+      Compute._computeCallSubscribers = tmp;
     });
   });//describe('computeObservableCall', function() {
 

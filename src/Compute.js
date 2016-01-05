@@ -16,7 +16,6 @@
     var ko,
         observable,
         observableArray,
-        computeCallSubscribers,
         computeObservableCall,
         computeObservable,
         isObservable,
@@ -73,7 +72,7 @@
         state.subscriptions.push(fn);
       }
 
-      computeCallSubscribers = function computeCallSubscribers(state) {
+      C._computeCallSubscribers = function _computeCallSubscribers(state) {
         var subscriptions = state.subscriptions;
         var value = state.value;
         for (var i = 0, len = subscriptions.length; i < len; i++) {
@@ -91,7 +90,7 @@
         var valueChanged = newValue !== state.value;
         state.value = newValue;
         if (valueChanged)
-          Compute.computeCallSubscribers(state);
+          C._computeCallSubscribers(state);
       }
 
       computeObservable = function computeObservable(value, thisIsAnArray) {
@@ -117,7 +116,7 @@
         if (thisIsAnArray) {
           result.push = function computeObservableArrayPush(newItem) {
             state.value.push(newItem);
-            Compute.computeCallSubscribers(state);
+            C._computeCallSubscribers(state);
             return state.value.length;
           };
 
@@ -127,7 +126,7 @@
               return;
 
             var item = state.value.pop();
-            Compute.computeCallSubscribers(state);
+            C._computeCallSubscribers(state);
             return item;
           }
         }
@@ -272,7 +271,6 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['_computeCallSubscribers'] = computeCallSubscribers;
      exports['_computeObservableCall']  = computeObservableCall;
      exports['_computeObservable']      = computeObservable;
      exports['isObservable']            = isObservable;
