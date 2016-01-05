@@ -8,7 +8,7 @@
 (function(define) {
   define('Compute', function(require, exports) {
     // BEGIN DEFINITION
-    var Compute;
+    var C = Compute = exports;
     var MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
     var MSGInvalidArgumentToSubscribe        = 'fn must be a function';
     var MSGInvalidArgumentToOnChange         = 'Invalid arguments to OnChange';
@@ -23,7 +23,6 @@
         isObservable,
         unwrap,
         isValid,
-        gather,
         on,
         from;
 
@@ -191,7 +190,7 @@
      * @param {Array} observables - The observables to be evaluated
      * @returns {Array} - Values of observables in observables array
      */
-    function gather(observables) {
+    C._gather = function _gather(observables) {
       var values = [];
       for (var i = 0, len = observables.length; i < len; i++) {
         values.push(unwrap(observables[i]));
@@ -211,7 +210,7 @@
         var stopped = false;
         var internalOnChangeHandler = function internalOnChangeHandler() {
           if (!stopped)
-            handler.apply(null, gather(observables));
+            handler.apply(null, C._gather(observables));
         }
 
         for (var i = 0, len = observables.length; i < len; i++)
@@ -247,7 +246,7 @@
         var stopped = false;
         function internalOnChangeHandlerForFrom() {
           if (!stopped)
-            newObservable(handler.apply(null, gather(observables)));
+            newObservable(handler.apply(null, C._gather(observables)));
           return newObservable;
         }
 
@@ -272,12 +271,10 @@
      * API
      * Export as much as possible to facilitate testing.
      * ****************************************************************************/
-     Compute = exports; // So that we can mock functions for testing
      // deprecated exports
      exports['_unwrap']                 = unwrap;
 
      // current
-     exports['_gather']                 = gather;
      exports['_isValid']                = isValid;
      exports['unwrap']                  = unwrap;
      exports['_computeSubscribe']       = computeSubscribe;
