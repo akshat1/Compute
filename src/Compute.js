@@ -16,7 +16,6 @@
     var ko,
         observable,
         observableArray,
-        computeObservable,
         isObservable,
         on,
         from;
@@ -92,7 +91,7 @@
           C._computeCallSubscribers(state);
       }
 
-      computeObservable = function computeObservable(value, thisIsAnArray) {
+      C._computeObservable = function _computeObservable(value, thisIsAnArray) {
         if (thisIsAnArray && value !== null && (typeof value !== 'undefined') && !isArray(value))
           throw new Error(MSGInvalidArgumentsToObservableArray);
 
@@ -133,9 +132,9 @@
         return result;
       };
 
-      observable = computeObservable;
+      observable = C._computeObservable;
       observableArray = function computeObservableProxyForArray(value) {
-        return computeObservable(value, true);
+        return C._computeObservable(value, true);
       }
     }
 
@@ -270,7 +269,6 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['_computeObservable']      = computeObservable;
      exports['isObservable']            = isObservable;
      exports['Observable']              = observable;
      exports['ObservableArray']         = observableArray;
