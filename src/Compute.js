@@ -22,7 +22,6 @@
         computeObservable,
         isObservable,
         unwrap,
-        isValid,
         on,
         from;
 
@@ -170,7 +169,7 @@
      * @param {function} func
      * @returns {boolean}
      */
-    function isValid(observables, func) {
+    C._isValid = function _isValid(observables, func) {
       if (isObservable(func))
         return false;
 
@@ -206,7 +205,7 @@
     function computeOnChange() {
       var observables = Array.prototype.slice.apply(arguments);
       var handler = observables.pop();
-      if (isValid(observables, handler)) {
+      if (C._isValid(observables, handler)) {
         var stopped = false;
         var internalOnChangeHandler = function internalOnChangeHandler() {
           if (!stopped)
@@ -241,7 +240,7 @@
     function computeFrom() {
       var observables = Array.prototype.slice.apply(arguments);
       var handler = observables.pop();
-      if (isValid(observables, handler)) {
+      if (C._isValid(observables, handler)) {
         var newObservable = observable();
         var stopped = false;
         function internalOnChangeHandlerForFrom() {
@@ -275,7 +274,6 @@
      exports['_unwrap']                 = unwrap;
 
      // current
-     exports['_isValid']                = isValid;
      exports['unwrap']                  = unwrap;
      exports['_computeSubscribe']       = computeSubscribe;
      exports['_computeCallSubscribers'] = computeCallSubscribers;
