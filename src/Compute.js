@@ -21,7 +21,6 @@
         computeObservableCall,
         computeObservable,
         isObservable,
-        unwrap,
         on,
         from;
 
@@ -54,7 +53,7 @@
         return ko.isObservable(obj);
       }
 
-      unwrap = function unwrapProxy(obj) {
+      C.unwrap = function unwrapProxy(obj) {
         return ko.unwrap(obj);
       }
     }
@@ -65,7 +64,7 @@
         return obj._isObservable || false;
       }
 
-      unwrap = function computeUnwrap(obj) {
+      C.unwrap = function computeUnwrap(obj) {
         return obj.state.value;
       }
 
@@ -192,7 +191,7 @@
     C._gather = function _gather(observables) {
       var values = [];
       for (var i = 0, len = observables.length; i < len; i++) {
-        values.push(unwrap(observables[i]));
+        values.push(C.unwrap(observables[i]));
       }
       return values;
     }
@@ -271,10 +270,9 @@
      * Export as much as possible to facilitate testing.
      * ****************************************************************************/
      // deprecated exports
-     exports['_unwrap']                 = unwrap;
+     C._unwrap = C.unwrap;
 
      // current
-     exports['unwrap']                  = unwrap;
      exports['_computeSubscribe']       = computeSubscribe;
      exports['_computeCallSubscribers'] = computeCallSubscribers;
      exports['_computeObservableCall']  = computeObservableCall;
