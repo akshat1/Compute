@@ -14,8 +14,6 @@
     var MSGInvalidArgumentToOnChange         = 'Invalid arguments to OnChange';
     var MSGInvalidArgumentToFrom             = 'Invalid arguments to From';
     var ko,
-        observable,
-        observableArray,
         on,
         from;
 
@@ -36,11 +34,11 @@
      * proxies around knockout's observables (for use within our module).
      * ****************************************************************************/
     function knockoutFound(ko) {
-      observable = function observableProxy(value) {
+      C.Observable = function observableProxy(value) {
         return ko.observable(value);
       }
 
-      observableArray = function observableArrayProxy(value) {
+      C.ObservableArray = function observableArrayProxy(value) {
         return ko.observableArray(value);
       };
 
@@ -111,8 +109,11 @@
 
         result._isObservable = true;
         if (thisIsAnArray) {
-          result.push = function computeObservableArrayPush(newItem) {
-            state.value.push(newItem);
+          result.push = function computeObservableArrayPush() {
+            var newItems = Array.prototype.slice.apply(arguments);
+            for (var i = 0, len = newItems.length; i < len; i++) {
+              state.value.push(newItems[i]);
+            }
             C._computeCallSubscribers(state);
             return state.value.length;
           };
@@ -123,7 +124,8 @@
               return;
 
             var item = state.value.pop();
-            C._computeCallSubscribers(state);
+            if (item)
+              C._computeCallSubscribers(state);
             return item;
           }
         }
@@ -131,8 +133,8 @@
         return result;
       };
 
-      observable = C._computeObservable;
-      observableArray = function computeObservableProxyForArray(value) {
+      C.Observable = C._computeObservable;
+      C.ObservableArray = function computeObservableProxyForArray(value) {
         return C._computeObservable(value, true);
       }
     }
@@ -164,6 +166,7 @@
      * @returns {boolean}
      */
     C._isValid = function _isValid(observables, func) {
+      console.debug('observables: %O', observables);
       if (C.isObservable(func))
         return false;
 
@@ -268,10 +271,8 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['Observable']              = observable;
-     exports['ObservableArray']         = observableArray;
-     exports['o']                       = observable;
-     exports['oa']                      = observableArray;
+     exports['o']                       = C.Observable;
+     exports['oa']                      = C.ObservableArray;
      exports['on']                      = computeOnChange;
      exports['from']                    = computeFrom;
 

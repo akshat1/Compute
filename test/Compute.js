@@ -194,18 +194,100 @@ describe('Compute', function() {
       observableArray.pop.should.be.a('function');
     })
 
-    /*
     describe('push', function() {
       it('should add push new item into the value array', function() {
         var observableArray = Compute._computeObservable([], true);
         var newItem0 = 'NEWITEM0';
         var newItem1 = 'NEWITEM1';
+        var newItem2 = 'NEWITEM2';
+        var newItem3 = 'NEWITEM3';
         observableArray.push(newItem0);
-        console.dir(observableArray.state);
-        observableArray.state.value.should.equal([newItem0]);
+        observableArray.state.value.should.have.members([newItem0]);
         observableArray.push(newItem1);
-        observableArray.state.value.should.equal([newItem0, newItem1]);
+        observableArray.state.value.should.have.members([newItem0, newItem1]);
+        observableArray.push(newItem2, newItem3, newItem1);
+        observableArray.state.value.should.have.members([newItem0, newItem1, newItem2, newItem3, newItem1]);
       })
-    });*/
+    });
+
+    describe('pop', function() {
+      it('should remove the last item from the value array', function() {
+        var poppedItem;
+        var item0 = 'ITEM0';
+        var item1 = 'ITEM1';
+        var observableArray = Compute._computeObservable([item0, item1], true);
+        poppedItem = observableArray.pop();
+        poppedItem.should.equal(item1);
+        observableArray.state.value.should.have.members([item0]);
+        poppedItem = observableArray.pop();
+        poppedItem.should.equal(item0);
+        observableArray.state.value.should.have.members([]);
+        poppedItem = observableArray.pop();
+        expect(poppedItem).to.be.an('undefined');
+      })
+    });
   });//describe('computeObservable', function() {
+
+
+  describe('Observable', function() {
+    it('should be the same as _computeObservable and C.o', function() {
+      Compute.Observable.should.equal(Compute._computeObservable);
+      Compute.Observable.should.equal(Compute.o);
+    });
+  });//describe('Observable', function() {
+
+
+  describe('ObservableArray', function() {
+    it('should call _computeObservable with isArray true', function() {
+      var expectedArray = [1, 2, 3, 4, 5];
+      var expectedResult = {};
+      var tmp = Compute._computeObservable;
+      var stub = Compute._computeObservable = sinon.stub();
+      stub.returns(expectedResult);
+      var result = Compute.ObservableArray(expectedArray);
+      result.should.equal(expectedResult);
+      stub.callCount.should.equal(1);
+      var receivedArgs = stub.getCall(0).args;
+      receivedArgs[0].should.have.members(expectedArray);
+      receivedArgs[1].should.be.true;
+      Compute._computeObservable = tmp;
+    })
+
+    it('should be the same as Compute.oa', function() {
+      Compute.oa.should.equal(Compute.ObservableArray);
+    });
+  });//describe('ObservableArray', function() {
+
+
+  describe('_isValid', function() {
+    it('should return false if func is an observable', function() {
+      Compute._isValid([Compute.o(), Compute.o()], Compute.o()).should.be.false;
+    });
+
+    it('should return false if func is not a function', function() {
+      Compute._isValid([Compute.o(), Compute.o(), Compute.o()], {}).should.be.false;
+    });
+
+    it('should return false if any of the observables argument isnt an observable', function() {
+      Compute._isValid([Compute.o(), {}, Compute.o()], function(){}).should.be.false;
+    });
+
+    it('should return true when all observables are observables and the func is a function', function() {
+      Compute._isValid([Compute.o(), Compute.o(), Compute.o()], function(){}).should.be.true;
+    })
+  });//describe('_isValid', function()
+
+
+  describe('_gather', function() {
+    it('should return unwrapped values of all the observables', function() {
+      var expectedArray = [3, 56, 82, 1];
+      var result = Compute._gather([
+        Compute.o(3),
+        Compute.o(56),
+        Compute.o(82),
+        Compute.o(1)
+        ]);
+      result.should.have.members(expectedArray);
+    });
+  });
 });
