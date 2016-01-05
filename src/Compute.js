@@ -16,7 +16,6 @@
     var ko,
         observable,
         observableArray,
-        computeSubscribe,
         computeCallSubscribers,
         computeObservableCall,
         computeObservable,
@@ -68,7 +67,7 @@
         return obj.state.value;
       }
 
-      computeSubscribe = function computeSubscribe(state, fn) {
+      C._computeSubscribe = function _computeSubscribe(state, fn) {
         if (typeof fn !== 'function')
           throw new Error(MSGInvalidArgumentToSubscribe);
         state.subscriptions.push(fn);
@@ -111,7 +110,7 @@
 
         result.state = state;
         result.subscribe = function (fn) {
-          Compute.computeSubscribe(state, fn);
+          C._computeSubscribe(state, fn);
         }
 
         result._isObservable = true;
@@ -273,7 +272,6 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['_computeSubscribe']       = computeSubscribe;
      exports['_computeCallSubscribers'] = computeCallSubscribers;
      exports['_computeObservableCall']  = computeObservableCall;
      exports['_computeObservable']      = computeObservable;

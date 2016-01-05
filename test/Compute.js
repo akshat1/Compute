@@ -178,14 +178,14 @@ describe('Compute', function() {
     });
 
     it('should return a result with subscribe function, which calls computeSubscribe', function() {
-      var tmp = Compute.computeSubscribe;
-      var spy = Compute.computeSubscribe = sinon.spy();
+      var tmp = Compute._computeSubscribe;
+      var spy = Compute._computeSubscribe = sinon.spy();
       var observable = Compute._computeObservable();
       var testParam = 'TESTPARAM'; //Doesn't need to be function since we mocked computeSubscribe
       observable.subscribe(testParam);
       spy.callCount.should.equal(1);
       spy.calledWithExactly(observable.state, testParam).should.be.true;
-      Compute.computeSubscribe = tmp;
+      Compute._computeSubscribe = tmp;
     });
 
     it('adds push and pop methods for observableArrays', function() {
