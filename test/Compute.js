@@ -289,5 +289,158 @@ describe('Compute', function() {
         ]);
       result.should.have.members(expectedArray);
     });
-  });
-});
+  });//describe('_gather', function() {
+
+  describe('computeOnChange', function() {
+    it('should throw exception on invalid params', function() {
+      var tmp = Compute._isValid;
+      var stub = Compute._isValid = sinon.stub();
+      var expectedArg0 = 0;
+      var expectedArg1 = 1;
+      var expectedArg2 = 3;
+      stub.returns(false);
+      var wrapper = function() {
+        Compute.on(expectedArg0, expectedArg1, expectedArg2);
+      }
+      wrapper.should.throw(Compute.MSGInvalidArgumentToOnChange);
+      stub.callCount.should.equal(1);
+      stub.getCall(0).args.should.deep.have.members([[expectedArg0, expectedArg1], expectedArg2])
+      Compute._isValid = tmp;
+    });
+
+    it('should call $fire with latest values when any observable changes', function() {
+      var expectedArg0 = 0;
+      var expectedArg1 = 1;
+      var expectedArg2 = 2;
+      var expectedArg3 = 3;
+      var expectedArg4 = 4;
+      var expectedArg5 = 5;
+      var ob0 = Compute.o(expectedArg0);
+      var ob1 = Compute.o(expectedArg1);
+      var ob2 = Compute.o(expectedArg2);
+      var handler = sinon.spy();
+      Compute.on(ob0, ob1, ob2, handler);
+      ob0(expectedArg3);
+      handler.callCount.should.equal(1);
+      handler.getCall(0).args.should.have.members([expectedArg3, expectedArg1, expectedArg2]);
+      ob1(expectedArg4);
+      handler.callCount.should.equal(2);
+      ob2(expectedArg5);
+      handler.callCount.should.equal(3);
+      handler.getCall(1).args.should.have.members([expectedArg3, expectedArg4, expectedArg2]);
+      handler.getCall(2).args.should.have.members([expectedArg3, expectedArg4, expectedArg5]);
+    });
+
+    describe('$fire', function() {
+      it('should call handler with current values when called', function() {
+        var expectedArg0 = 0;
+        var expectedArg1 = 1;
+        var expectedArg2 = 2;
+        var ob0 = Compute.o(expectedArg0);
+        var ob1 = Compute.o(expectedArg1);
+        var ob2 = Compute.o(expectedArg2);
+        var handler = sinon.spy();
+        var thunk = Compute.on(ob0, ob1, ob2, handler);
+        thunk.$fire();
+        handler.callCount.should.equal(1);
+        handler.getCall(0).args.should.have.members([expectedArg0, expectedArg1, expectedArg2]);
+      });
+
+      it('should not call handler after $stop has been called', function() {
+        var expectedArg0 = 0;
+        var expectedArg1 = 1;
+        var expectedArg2 = 2;
+        var ob0 = Compute.o(expectedArg0);
+        var ob1 = Compute.o(expectedArg1);
+        var ob2 = Compute.o(expectedArg2);
+        var handler = sinon.spy();
+        var thunk = Compute.on(ob0, ob1, ob2, handler);
+        thunk.$stop();
+        thunk.$fire();
+        handler.callCount.should.equal(0);
+      });
+
+      it('should start calling handler after $resume has been called', function() {
+        var expectedArg0 = 0;
+        var expectedArg1 = 1;
+        var expectedArg2 = 2;
+        var ob0 = Compute.o(expectedArg0);
+        var ob1 = Compute.o(expectedArg1);
+        var ob2 = Compute.o(expectedArg2);
+        var handler = sinon.spy();
+        var thunk = Compute.on(ob0, ob1, ob2, handler);
+        thunk.$stop();
+        thunk.$fire();
+        thunk.$resume();
+        thunk.$fire();
+        handler.callCount.should.equal(1);
+        handler.getCall(0).args.should.have.members([expectedArg0, expectedArg1, expectedArg2]);
+      });
+    });//describe('$fire', function() {
+  });//describe('computeOnChange', function() {
+
+
+  describe('computeFrom', function() {
+    it('should throw exception on invalid params', function() {
+      var tmp = Compute._isValid;
+      var stub = Compute._isValid = sinon.stub();
+      var expectedArg0 = 0;
+      var expectedArg1 = 1;
+      var expectedArg2 = 3;
+      stub.returns(false);
+      var wrapper = function() {
+        Compute.from(expectedArg0, expectedArg1, expectedArg2);
+      }
+      wrapper.should.throw(Compute.MSGInvalidArgumentToOnChange);
+      stub.callCount.should.equal(1);
+      stub.getCall(0).args.should.deep.have.members([[expectedArg0, expectedArg1], expectedArg2])
+      Compute._isValid = tmp;
+    });
+
+    it('should call Compute.on with the said observables and its own changeHandler', function() {
+      var ob0 = Compute.o(0);
+      var ob1 = Compute.o(1);
+      var ob2 = Compute.o(2);
+      var fn  = function() {}
+      var tmp = Compute.on;
+      var stub = Compute.on = sinon.stub();
+      stub.returns({});
+      var resultOb = Compute.from(ob0, ob1, ob2, fn);
+      stub.callCount.should.equal(1);
+      stub.getCall(0).args.should.have.members([ob0, ob1, ob2, resultOb._internalChangeHandler]);
+      Compute.on = tmp;
+    });
+
+    it('should update the result observable with the latest value as returned by the valueFunction', function() {
+      var expectedArg0 = 0;
+      var expectedArg1 = 1;
+      var expectedArg2 = 2;
+      var ob0 = Compute.o(expectedArg0);
+      var ob1 = Compute.o(expectedArg1);
+      var ob2 = Compute.o(expectedArg2);
+      var resultOb = Compute.from(ob0, ob1, ob2, function(a, b, c) {
+        return a + b + c;
+      });
+      resultOb.$fire();
+      resultOb().should.equal(3);
+    });
+  });//describe('computeFrom', function() {
+
+  describe('_defineFunction', function() {
+    describe('_knockoutFound', function() {
+      it('should refer methods from knockout', function() {
+        var fakeKO = {
+          observable      : function() {},
+          observableArray : function() {},
+          isObservable    : function() {},
+          unwrap          : function() {}
+        };
+        Compute._knockoutFound(fakeKO);
+        Compute.Observable.should.equal(fakeKO.observable);
+        Compute.ObservableArray.should.equal(fakeKO.observableArray);
+        Compute.isObservable.should.equal(fakeKO.isObservable);
+        Compute.unwrap.should.equal(fakeKO.unwrap);
+      });
+    });//describe('_knockoutFound', function() {
+  });//describe('_defineFunction', function() {
+});//describe('Compute', function() {

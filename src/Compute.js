@@ -33,25 +33,14 @@
      * Implement observables unless knockout is present; In which case we create
      * proxies around knockout's observables (for use within our module).
      * ****************************************************************************/
-    function knockoutFound(ko) {
-      C.Observable = function observableProxy(value) {
-        return ko.observable(value);
-      }
-
-      C.ObservableArray = function observableArrayProxy(value) {
-        return ko.observableArray(value);
-      };
-
-      C.isObservable = function isObservableProxy(obj) {
-        return ko.isObservable(obj);
-      }
-
-      C.unwrap = function unwrapProxy(obj) {
-        return ko.unwrap(obj);
-      }
+    C._knockoutFound = function _knockoutFound(ko) {
+      C.Observable      = ko.observable;
+      C.ObservableArray = ko.observableArray;
+      C.isObservable    = ko.isObservable;
+      C.unwrap          = ko.unwrap;
     }
 
-    function noKnockoutFound() {
+    C._noKnockoutFound = function _noKnockoutFound() {
       // No knockout. Use our own observables.
       C.isObservable = function computeIsObservable(obj) {
         return obj._isObservable || false;
@@ -145,12 +134,12 @@
       // in node, require('knockout') works while in browser, require('ko')
       ko = require('knockout') || require('ko');
       if (ko)
-        knockoutFound(ko);
+        C._knockoutFound(ko);
       else
-        noKnockoutFound(ko);
+        C._noKnockoutFound(ko);
 
     } catch (err) {
-      noKnockoutFound();
+      C._noKnockoutFound();
     }
 
 
@@ -166,7 +155,6 @@
      * @returns {boolean}
      */
     C._isValid = function _isValid(observables, func) {
-      console.debug('observables: %O', observables);
       if (C.isObservable(func))
         return false;
 
@@ -238,25 +226,17 @@
       var observables = Array.prototype.slice.apply(arguments);
       var handler = observables.pop();
       if (C._isValid(observables, handler)) {
-        var newObservable = observable();
-        var stopped = false;
+        var newObservable = C.Observable();
         function internalOnChangeHandlerForFrom() {
-          if (!stopped)
-            newObservable(handler.apply(null, C._gather(observables)));
+          newObservable(handler.apply(null, arguments));
           return newObservable;
         }
 
-        for (var i = 0, len = observables.length; i < len; i++)
-          observables[i].subscribe(internalOnChangeHandlerForFrom);
-
-        newObservable.$fire = internalOnChangeHandlerForFrom;
-        newObservable.$stop = function() {
-          stopped = true;
-        };
-        newObservable.$resume = function() {
-          stopped = false;
-        };
-
+        var thunk = Compute.on.apply(this, observables.concat([internalOnChangeHandlerForFrom]));
+        newObservable._internalChangeHandler = internalOnChangeHandlerForFrom;
+        newObservable.$fire = thunk.$fire;
+        newObservable.$stop = thunk.$stop;
+        newObservable.$resume = thunk.$resume;
         return newObservable;
       } else {
         throw new Error(MSGInvalidArgumentToFrom);
@@ -271,10 +251,10 @@
      C._unwrap = C.unwrap;
 
      // current
-     exports['o']                       = C.Observable;
-     exports['oa']                      = C.ObservableArray;
-     exports['on']                      = computeOnChange;
-     exports['from']                    = computeFrom;
+     exports['o']    = C.Observable;
+     exports['oa']   = C.ObservableArray;
+     exports['on']   = computeOnChange;
+     exports['from'] = computeFrom;
 
      // Error messages for consuming in tests
      exports[MSGInvalidArgumentToFrom]             = MSGInvalidArgumentToFrom
