@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Compute: Smoke Test</title>
+    <script src='../src/Compute.js'></script>
+    <script>
+      var demoFunc = function(){
+          console.log("DOMContentLoaded");
+          var C = window.Compute;
+          var x = C.o(1);
+          var y = C.o(1);
+          var op = C.o('+');
+          var z = C.from(x, op, y, function(o1, opr, o2){
+              o1 = Number(o1).valueOf();
+              o2 = Number(o2).valueOf();
+              switch(opr){
+                  case '+': return o1 + o2;
+                  case '-': return o1 - o2;
+                  case 'x': return o1 * o2;
+                  case '%': return o1 / o2;
+                  default : return '-';
+              }
+          });
+
+          C.on(x, function(valueOfX) {
+            document.getElementById('x').value = valueOfX;
+          }).$fire();
+
+          C.on(y, function(valueOfY) {
+            document.getElementById('y').value = valueOfY;
+          }).$fire();
+
+          C.on(op, function(valueOfOp) {
+            document.getElementById('operator').selectedValue = valueOfOp;
+          }).$fire();
+
+          C.on(z, function(valueOfZ) {
+            document.getElementById('z').value = valueOfZ;
+          });
+
+          z.$fire();
+
+          document.getElementById('x').addEventListener('keyup', function(evt) {
+            x(evt.currentTarget.value);
+          });
+
+          document.getElementById('y').addEventListener('keyup', function(evt) {
+            y(evt.currentTarget.value);
+          });
+
+          document.getElementById('operator').addEventListener('change', function(evt) {
+            op(evt.currentTarget.value);
+          });
+      }
+
+      document.addEventListener('DOMContentLoaded', demoFunc);
+    </script>
+  </head>
+  <body>
+    <table id='stage'>
+      <tr>
+          <td>X</td>
+          <td>Op.</td>
+          <td>Y</td>
+          <td>=</td>
+          <td>Result</td>
+      </tr>
+      <tr>
+          <td><input size='3' id='x' data-bind="value: x, valueUpdate: 'keyup'"/></td>
+          <td>
+            <select id='operator'>
+              <option value='+'>+</option>
+              <option value='-'>-</option>
+              <option value='%'>%</option>
+              <option value='x'>x</option>
+            </select>
+          </td>
+          <td><input size='3' id='y' data-bind="value: y, valueUpdate: 'keyup'"/></td>
+          <td> = </td>
+          <td><input size='5' id='z' data-bind="value: z" disabled='disabled'/></td>
+      </tr>
+    </table>
+  </body>
+</html>

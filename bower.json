@@ -25,5 +25,12 @@
     "src",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "blanket": "~1.1.7",
+    "chai": "~3.4.2",
+    "mocha": "~2.3.4",
+    "should": "~8.0.2",
+    "sinon": "~1.17.2"
+  }
 }
