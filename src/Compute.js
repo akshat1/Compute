@@ -1,23 +1,22 @@
-/**
-* @namespace Compute
-*/
-
 'use strict';
 
 // UMD pattern copied from https://addyosmani.com/writing-modular-js/
 (function(define) {
   define('Compute', function(require, exports) {
-    // BEGIN DEFINITION
+    /**
+     * An extremely simple reactive programming library
+     * @exports Compute
+     */
+    var Compute;
     var C = Compute = exports;
+    C.version = '%%%COMPUTE_VERSION%%%';
     var MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
     var MSGInvalidArgumentToSubscribe        = 'fn must be a function';
     var MSGInvalidArgumentToOnChange         = 'Invalid arguments to OnChange';
     var MSGInvalidArgumentToFrom             = 'Invalid arguments to From';
-    var ko,
-        on,
-        from;
+    var ko;
 
-    /**
+    /*
      * Determine whether or not the object is an Array. Uses Array.isArray if available, failing
      * which uses Object.toString.
      * @see http://web.mit.edu/jwalden/www/isArray.html
@@ -40,22 +39,54 @@
       C.unwrap          = ko.unwrap;
     }
 
+
+    // No knockout. Use our own observables.
     C._noKnockoutFound = function _noKnockoutFound() {
-      // No knockout. Use our own observables.
+      /**
+       * @alias isObservable
+       * @memberof module:Compute
+       * @param {object} obj - the object to be tested
+       * @returns {boolean} - whether or not obj is an observable
+       */
       C.isObservable = function computeIsObservable(obj) {
         return obj._isObservable || false;
       }
 
+      /**
+       * get the value of observable obj
+       * <p>Note that since each observable is a function, you can also simply execute the observable without values to get its value</p>
+       * @alias unwrap
+       * @memberof module:Compute
+       * @param {object} obj - the observable whose value is required
+       * @returns {object} - the value stored within the observable obj
+       */
       C.unwrap = function computeUnwrap(obj) {
         return obj.state.value;
       }
 
+      /**
+       * Create a subscription on an observable (with state 'state') such that fn is
+       * executed every time the observable changes.
+       * @name _computeSubscribe
+       * @access private
+       * @memberof module:Compute
+       * @param {Object} state - Internal state representation of an observable
+       * @param {Function} fn - The function to be executed when the observable changes
+       */
       C._computeSubscribe = function _computeSubscribe(state, fn) {
         if (typeof fn !== 'function')
           throw new Error(MSGInvalidArgumentToSubscribe);
         state.subscriptions.push(fn);
       }
 
+      /**
+       * Call all the subscribers of the observable with this state with the
+       * curent value of the observable.
+       * @name _computeCallSubscribers
+       * @param {Object} state
+       * @memberof module:Compute
+       * @access private
+       */
       C._computeCallSubscribers = function _computeCallSubscribers(state) {
         var subscriptions = state.subscriptions;
         var value = state.value;
@@ -64,6 +95,17 @@
         }
       }
 
+      /**
+       * the behavior of an observable when it is called. If provided a newValue,
+       * it will be set as the value of this observable and (if the newValue is
+       * different) all the subscribers called with the latest value. Otherwise, simply
+       * the current value will be returned.
+       * @name _computeObservableCall
+       * @memberof module:Compute
+       * @access private
+       * @param {Object} state - the internal state of an observable
+       * @param {Object} [newValue] - the new new value of this observable
+       */
       C._computeObservableCall = function _computeObservableCall(state, newValue) {
         if(typeof newValue === 'undefined')
           return state.value;
@@ -77,10 +119,22 @@
           C._computeCallSubscribers(state);
       }
 
+      /**
+       * create an observable
+       * @returns {Observable}
+       * @memberof module:Compute
+       * @access private
+       */
       C._computeObservable = function _computeObservable(value, thisIsAnArray) {
         if (thisIsAnArray && value !== null && (typeof value !== 'undefined') && !isArray(value))
           throw new Error(MSGInvalidArgumentsToObservableArray);
 
+        /**
+         * The internal state of the observable being created.
+         * @name state
+         * @property
+         * @memberof Observable.prototype
+         */
         var state = {
           value         : thisIsAnArray ? (value || []) : value,
           subscriptions : [],
@@ -92,12 +146,25 @@
         }
 
         result.state = state;
+
+        /**
+         * execute fn every time the value of this observable changes
+         * @access public
+         * @name subscribe
+         * @memberof Observable.prototype
+         * @param {Function} fn
+         */
         result.subscribe = function (fn) {
           C._computeSubscribe(state, fn);
         }
 
         result._isObservable = true;
         if (thisIsAnArray) {
+          /**
+           * @memberof ObservableArray.prototype
+           * @param {...Object} items - the items to be added to this observable array
+           * @name push
+           */
           result.push = function computeObservableArrayPush() {
             var newItems = Array.prototype.slice.apply(arguments);
             for (var i = 0, len = newItems.length; i < len; i++) {
@@ -107,6 +174,11 @@
             return state.value.length;
           };
 
+          /**
+           * @memberof ObservableArray.prototype
+           * @returns {Object} - the last item in this observable array
+           * @name pop
+           */
           result.pop = function computeObservableArrayPop() {
             var value = state.value;
             if (value.length === 0)
@@ -122,7 +194,26 @@
         return result;
       };
 
+      /**
+       * <p><b>NOTE: This is actually a factory function; I just don't know how to document factories with JSDoc</b></p>
+       * A function which can be called to store / retreive a value and which can be observed in order to
+       * react to updated values.
+       * @constructor
+       * @name Observable
+       * @augments Observable
+       * @memberof module:Compute
+       */
       C.Observable = C._computeObservable;
+
+      /**
+       * <p><b>NOTE: This is actually a factory function; I just don't know how to document factories with JSDoc</b></p>
+       * Same as observable but intended to deal with arrays. Comes with extra sugar methods for arrays.
+       * @constructor
+       * @name ObservableArray
+       * @augments Observable
+       * @augments ObservableArray
+       * @memberof module:Compute
+       */
       C.ObservableArray = function computeObservableProxyForArray(value) {
         return C._computeObservable(value, true);
       }
@@ -153,6 +244,8 @@
      * @param {Array} observables
      * @param {function} func
      * @returns {boolean}
+     * @memberof module:Compute
+     * @access private
      */
     C._isValid = function _isValid(observables, func) {
       if (C.isObservable(func))
@@ -173,6 +266,8 @@
      * given an array of observables, return their values as an array
      * @param {Array} observables - The observables to be evaluated
      * @returns {Array} - Values of observables in observables array
+     * @memberof module:Compute
+     * @access private
      */
     C._gather = function _gather(observables) {
       var values = [];
@@ -184,8 +279,10 @@
 
     /**
      * call a function whenever the value of specified observables is changed
-     * @param {... n - 1} observables - The observables to be monitored
-     * @param {function} handler - The function to be called
+     * @alias on
+     * @param {...Observable} observables - The observables to be monitored
+     * @param {function} handler - The function to be called with the value of all observables
+     * @memberof module:Compute
      */
     function computeOnChange() {
       var observables = Array.prototype.slice.apply(arguments);
@@ -216,11 +313,13 @@
 
     /**
      * Given a set of observables, and a compute function, return a new observable
-     * which gets its value from the compute function and the value of each source
+     * which gets its value from the function handler and the value of each source
      * observable. Update the value of this observable every time one of the
      * observables changes.
-     * @param {... n - 1} observables - The observables to be monitored
-     * @param {function} handler - The function to be called
+     * @alias from
+     * @param {...Observable} observables - The observables to be monitored
+     * @param {function} handler - The function to be called with values of all source observables to get the new value of this observable
+     * @memberof module:Compute
      */
     function computeFrom() {
       var observables = Array.prototype.slice.apply(arguments);
