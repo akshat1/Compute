@@ -1,6 +1,6 @@
 {
   "name": "compute",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "homepage": "https://github.com/akshat1/compute",
   "authors": [
     "akshat1 <akshat.sh@gmail.com>"
@@ -24,6 +24,15 @@
     "package.json",
     "src",
     "test",
-    "tests"
-  ]
+    "coverage",
+    "documentation"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "blanket": "~1.1.7",
+    "chai": "~3.4.2",
+    "mocha": "~2.3.4",
+    "should": "~8.0.2",
+    "sinon": "~1.17.2"
+  }
 }

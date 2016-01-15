@@ -1,18 +1,15 @@
 var gulp        = require("gulp");
 var rename      = require("gulp-rename");
-var coffee      = require('gulp-coffee');
-//var run         = require('gulp-run');
-//var runSequence = require('run-sequence');
 var del         = require('del');
 var uglify      = require('gulp-uglify');
 var mocha       = require('gulp-mocha');
-var istanbul    = require('gulp-coffee-istanbul');
-var coffeelint  = require('gulp-coffeelint');
+var istanbul    = require('gulp-istanbul');
 var replace     = require('gulp-replace');
 var path        = require('path');
 var fs          = require('fs');
+var eslint      = require('gulp-eslint');
 var jsdoc       = require('gulp-jsdoc');
-require('coffee-script/register');
+
 
 var MiniFileName  = 'compute-mini.js';
 var DebugFileName = 'compute-debug.js';
@@ -22,12 +19,14 @@ var DirDist          = 'dist';
 var DirTest          = 'test';
 var DirCoverage      = 'coverage';
 var DirDocumentation = 'documentation'
-var Source    = path.join(DirSource, '**', '*.coffee');
+var Source    = path.join(DirSource, '**', '*.js');
+var Test      = path.join(DirTest, '**', '*.js');
 var DestMini  = path.join(DirDist, MiniFileName);
 var DestDebug = path.join(DirDist, DebugFileName);
 var Documentation = DirDocumentation;
-var Test      = path.join(DirTest, '**', '*.coffee');
 var Coverage  = DirCoverage;
+
+var webserver = require('gulp-webserver');
 
 
 var COMPUTE_VERSION_PATTERN = '%%%COMPUTE_VERSION%%%';
@@ -35,31 +34,35 @@ function getVersion(){
   return JSON.parse(fs.readFileSync('package.json', {'encoding':'utf8'})).version;
 }
 
-/*
-gulp.task('mkdir-setup', function(cb) {
-  var dirs = [DirDist];
-  run('mkdir -p ' + dirs.join(' ')).exec(cb);
-});
-*/
 
-gulp.task('clean', function(){
-  return del([DirDist, Coverage, Documentation]);
+gulp.task('clean-documentation', function() {
+  return del([Documentation]);
 });
 
 
-gulp.task('build-debug', function(){
+gulp.task('clean-dist', function() {
+  return del([DirDist]);
+});
+
+
+gulp.task('clean-coverage', function() {
+  return del([Coverage]);
+});
+
+gulp.task('clean', ['clean-documentation', 'clean-dist', 'clean-coverage']);
+
+
+gulp.task('build-debug', ['lint', 'clean-dist'], function(){
   return gulp.src(Source)
     .pipe(replace(COMPUTE_VERSION_PATTERN, getVersion()))
-    .pipe(coffee())
     .pipe(rename(DebugFileName))
     .pipe(gulp.dest(DirDist));
 });
 
 
-gulp.task('build-mini', function(){
+gulp.task('build-mini', ['lint', 'clean-dist'], function(){
   return gulp.src(Source)
     .pipe(replace(COMPUTE_VERSION_PATTERN, getVersion()))
-    .pipe(coffee())
     .pipe(uglify({
       compress: true
     }))
@@ -68,36 +71,57 @@ gulp.task('build-mini', function(){
 });
 
 
-gulp.task('test-inner', function(cb){
+gulp.task('lint', function() {
   gulp.src(Source)
+    .pipe(eslint({
+      extends: 'eslint:recommended',
+      globals: {
+        define  : false,
+        require : false,
+        exports : false,
+        window  : false
+      },
+      rules: {
+        'no-inner-declarations': 0
+      }
+    }))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+});
+
+
+gulp.task('document', ['clean-documentation'],function() {
+  gulp.src(Source)
+    .pipe(jsdoc(Documentation));
+});
+
+
+gulp.task('test-node-with-knockout', ['clean-coverage'], function() {
+  return gulp.src(Source)
     .pipe(istanbul())
-    .pipe(istanbul.hookRequire())
-    .on('finish', function(){
+    .pipe(istanbul.hookRequire({
+      includeUntested: true
+    }))
+    .on('finish', function() {
       gulp.src(Test)
-      .pipe(mocha())
-      .pipe(istanbul.writeReports({
-        dir: Coverage
+      .pipe(mocha({
+        reporter: 'nyan'
       }))
-      .on('end', cb)
+      .pipe(istanbul.writeReports({
+        dir: './coverage',
+        reporters: [ 'lcov', 'text'],
+        reportOpts: { dir: './coverage' }
+      }))
     });
 });
 
 
-gulp.task('lint', function () {
-  return gulp.src(Source)
-    .pipe(coffeelint())
-    .pipe(coffeelint.reporter());
+gulp.task('test', ['test-node-with-knockout']);
+
+
+gulp.task('webserver', function() {
+  gulp.src('./')
+    .pipe(webserver());
 });
-
-gulp.task('document', ['build-debug'], function(){
-  var sourcePath = path.join(DirDist, '*debug.js');
-  console.log(sourcePath, '-->', Documentation);
-  return gulp.src(sourcePath)
-    .pipe(jsdoc(Documentation));
-});
-
-gulp.task('test', ['lint', 'test-inner']);
-
-//'lint', 'test', 'document'
 
 gulp.task('default', ['build-debug', 'build-mini']);

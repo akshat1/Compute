@@ -9,7 +9,7 @@
      */
     var Compute;
     var C = Compute = exports;
-    C.version = '0.0.9';
+    C.version = '%%%COMPUTE_VERSION%%%';
     var MSGInvalidArgumentsToObservableArray = 'The argument passed when initializing an observable array must be an array, or null, or undefined.';
     var MSGInvalidArgumentToSubscribe        = 'fn must be a function';
     var MSGInvalidArgumentToOnChange         = 'Invalid arguments to OnChange';
