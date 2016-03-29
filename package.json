@@ -20,12 +20,8 @@
   },
   "devDependencies": {
     "chai": "^1.10.0",
-    "coffee-script": "^1.8.0",
     "del": "^2.0.2",
     "gulp": "^3.9.0",
-    "gulp-coffee": "^2.2.0",
-    "gulp-coffee-istanbul": "^0.6.0",
-    "gulp-coffeelint": "^0.4.0",
     "gulp-eslint": "^1.1.1",
     "gulp-istanbul": "^0.10.3",
     "gulp-jsdoc": "^0.1.5",
@@ -37,7 +33,6 @@
     "gulp-webserver": "^0.9.1",
     "istanbul": "^0.4.2",
     "mocha": "^2.1.0",
-    "require-hijack": "^1.2.1",
-    "run-sequence": "^1.0.2"
+    "sinon": "^1.17.3"
   }
 }
