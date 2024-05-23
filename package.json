@@ -1,12 +1,17 @@
 {
   "name": "compute",
   "description": "A simple reactive programming library.",
-  "keywords": "knockout, reactive, lambda",
+  "keywords": [
+    "knockout",
+    "reactive",
+    "lambda"
+  ],
   "homepage": "http://akshat1.github.io/compute/",
   "license": "MIT",
   "author": "akshat1",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "dist/compute-debug.js",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/akshat1/compute/issues",
     "email": "akshat.sh@gmail.com"
@@ -16,23 +21,8 @@
     "url": "https://github.com/akshat1/compute"
   },
   "scripts": {
-    "test": "gulp test"
-  },
-  "devDependencies": {
-    "chai": "^1.10.0",
-    "del": "^2.0.2",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.1.1",
-    "gulp-istanbul": "^0.10.3",
-    "gulp-jsdoc": "^0.1.5",
-    "gulp-mocha": "^2.0.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-replace": "^0.5.2",
-    "gulp-run": "^1.6.6",
-    "gulp-uglify": "^1.1.0",
-    "gulp-webserver": "^0.9.1",
-    "istanbul": "^0.4.2",
-    "mocha": "^2.1.0",
-    "sinon": "^1.17.3"
+    "clean": "rm -rf dist docs",
+    "types": "tsc",
+    "test": "node --test"
   }
 }
