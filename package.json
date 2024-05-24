@@ -2,8 +2,8 @@
   "name": "compute",
   "description": "A simple reactive programming library.",
   "keywords": [
-    "knockout",
     "reactive",
+    "observable",
     "lambda"
   ],
   "homepage": "http://akshat1.github.io/compute/",
@@ -22,7 +22,6 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs",
-    "types": "tsc",
     "test": "node --test"
   }
 }

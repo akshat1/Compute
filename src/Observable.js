@@ -1,8 +1,7 @@
 /**
  * @callback Observer
- * @template T
- * @param {T} newValue
- * @param {T} oldValue
+ * @param {*} newValue
+ * @param {*} oldValue
  */
 
 /**
@@ -13,30 +12,29 @@
 /**
  * @interface Observable
  * @extends Function
- * @template T
- * @property {Function} subscribe
- * @param {T} newValue
- * @returns {}
+ * @property {Function} subscribe - subscribe to the observable
+ * @param {*} newValue
+ * @returns {*} - current value
  */
 
 /**
- * @template T
- * @param {T} initialValue 
- * @returns {Observable<T>}
+ * Get a new Observable instance intialized with the given value.
+ * @param {*} initialValue 
+ * @returns {Observable}
  */
 export function observable(initialValue) {
   let value = initialValue;
   const observers = [];
   /**
    * @const
-   * @type {Map<Observer<T>, Subscription>}
+   * @type {Map<Observer, Subscription>}
    */
   const subscriptionsMap = new Map();
 
   /**
-   * @type {Observable<T>}
-   * @param {T} newValue 
-   * @returns {T}
+   * @type {Observable}
+   * @param {*} [newValue] - If specified, the observable will be updated with this value.
+   * @returns {*} - Current value. If newValue is specified, it will return the newValue.
    */
   function actualObservable (newValue) {
     if (arguments.length) {
@@ -51,8 +49,8 @@ export function observable(initialValue) {
   };
 
   /**
-   * @param {Observer<T>} observer 
-   * @returns 
+   * @param {Observer} observer 
+   * @returns {Subscription} - The subscription object which lets you unsubscribe from the observable.
    */
   actualObservable.subscribe = (observer) => {
     if (subscriptionsMap.has(observer)) {
