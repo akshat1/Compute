@@ -51,19 +51,17 @@ export const onChange = (fn, ...observables) => {
  */
 
 /**
- * @type ObservableComputer
+ * @type ObservableValueCalculator
  * @extends Function
- * @template T
  * @param {any[]} observableValues
- * @returns {T}
+ * @returns {*}
  */
 
 /**
  * @memberof Compute
- * @template T
- * @param {ObservableComputer<T>} fn 
- * @param  {...Observable<any>} observables 
- * @returns {SubscribedObservable<T>}
+ * @param {ObservableValueCalculator} fn 
+ * @param  {...Observable} observables 
+ * @returns {SubscribedObservable}
  */
 export function from(fn, ...observables) {
   const o = observable(fn(...gather(...observables)));
