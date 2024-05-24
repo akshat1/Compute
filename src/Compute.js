@@ -70,8 +70,6 @@ export function from(fn, ...observables) {
     return o(fn(...newValues));
   };
   const { unsubscribe } = onChange(handleChange, ...observables);
-  /// @ts-ignore We are adding a property to the observable object
   o.unsubscribe = unsubscribe;
-  /// @ts-ignore Rarely does one realise how we are giving up pro features trying to cater to the lowest common denominator
   return o;
 }
