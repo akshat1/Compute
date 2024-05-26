@@ -22,6 +22,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs",
-    "test": "node --test"
+    "test": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info",
+    "cov-html": "genhtml --output-directory=./coverage lcov.info"
   }
 }

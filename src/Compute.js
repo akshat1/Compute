@@ -2,11 +2,14 @@ import { observable, isObservable } from "./Observable.js";
 
 export { observable, isObservable };
 
-/** @module Compute */
+// The following is supposed to work but it doesn't work either in VSCode or in JSDoc. Fun.
+/** @typedef {import("./typedefs.js").Observer} Observer */
+/** @typedef {import("./typedefs.js").Observable} Observable */
+/** @typedef {import("./typedefs.js").Subscription} Subscription */
 
 /**
  * Unpack all the observables and return an array of values
- * @param {...import('./Observable').Observable} observables 
+ * @param {...Observable} observables 
  * @returns {any[]}
  */
 export const gather = (...observables) => observables.map(obs => obs());
@@ -34,11 +37,9 @@ export const gather = (...observables) => observables.map(obs => obs());
  * ```
  */
 export const onChange = (fn, ...observables) => {
-  const handleChange = () => {
-    console.log("[onChange] handleChange called", gather(...observables));
-    return fn(...gather(...observables));
-  };
+  const handleChange = () => fn(...gather(...observables));
   const subscriptions = observables.map(obs => obs.subscribe(handleChange));
+
   return {
     unsubscribe: () => subscriptions.forEach(subscription => subscription.unsubscribe()),
   };
@@ -46,13 +47,12 @@ export const onChange = (fn, ...observables) => {
 
 /**
  * @interface SubscribedObservable
- * @extends import('./Observable').Observable
- * @extends import('./Observable').Subscription
+ * @extends Observable
+ * @extends Subscription
  */
 
 /**
- * @type ObservableValueCalculator
- * @extends Function
+ * @typedef {Function} ObservableValueCalculator
  * @param {any[]} observableValues
  * @returns {*}
  */

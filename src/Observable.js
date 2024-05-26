@@ -1,21 +1,8 @@
-/**
- * @callback Observer
- * @param {*} newValue
- * @param {*} oldValue
- */
+import { SubscriptionManager } from "./SubscriptionManager.js";
 
-/**
- * @interface Subscription
- * @property {Function} unsubscribe
- */
-
-/**
- * @interface Observable
- * @extends Function
- * @property {Function} subscribe - subscribe to the observable
- * @param {*} newValue
- * @returns {*} - current value
- */
+/** @typedef {import("./typedefs.js").Observer} Observer */
+/** @typedef {import("./typedefs.js").Observable} Observable */
+/** @typedef {import("./typedefs.js").Subscription} Subscription */
 
 /**
  * Get a new Observable instance intialized with the given value.
@@ -24,12 +11,7 @@
  */
 export function observable(initialValue) {
   let value = initialValue;
-  const observers = [];
-  /**
-   * @const
-   * @type {Map<Observer, Subscription>}
-   */
-  const subscriptionsMap = new Map();
+  const subscriptionManager = new SubscriptionManager();
 
   /**
    * @type {Observable}
@@ -41,7 +23,7 @@ export function observable(initialValue) {
       const oldValue = value;
       value = newValue;
       if (oldValue !== value) {
-        observers.forEach(observer => observer(value, oldValue));
+        subscriptionManager.notify(value, oldValue);
       }
     }
 
@@ -52,25 +34,7 @@ export function observable(initialValue) {
    * @param {Observer} observer 
    * @returns {Subscription} - The subscription object which lets you unsubscribe from the observable.
    */
-  actualObservable.subscribe = (observer) => {
-    if (subscriptionsMap.has(observer)) {
-      return subscriptionsMap.get(observer);
-    }
-
-    observers.push(observer);
-
-    const subscription = {
-      unsubscribe() {
-        const index = observers.indexOf(observer);
-        if (index >= 0) {
-          observers.splice(index, 1);
-        }
-      },
-    };
-    subscriptionsMap.set(observer, subscription);
-
-    return subscription;
-  };
+  actualObservable.subscribe = (observer) => subscriptionManager.subscribe(observer);
 
   return actualObservable;
 }
