@@ -1,55 +1,70 @@
 # Compute [![Build Status](https://travis-ci.org/akshat1/compute.svg?branch=master)](https://travis-ci.org/akshat1/compute)
-An extremely simple reactive programming library using Knockout style Observables.
+An extremely simple reactive programming library using Observables.
 
-Compute lets you describe relations between different observables. For example,
+## Wait, what is an Observable?
 
-    var a = Compute.o();
-    var b = Compute.o();
-    var c = Compute.from(a, b, function(a1, b1){
-      return Math.sqrt(a*a + b*b)
-    });
-    a(3);
-    b(4);
-    console.log(c());   // 5
+An observable variable is a function, which holds a value. You can get the value by calling the function without any arguments, and you update the value by calling the function _with_ the desired new value.
 
-Now we change a, b
+The useful thing about an observable is that you can choose to be notified every time the value of this observable changes.
 
-    a(5);
-    b(12);
-    console.log(c());   //13
+```js
+import { observable, onChange } from "Compute";
 
+// Create a new observable.
+const o1 = observable(42);
 
-To stop c from being updated, we need to call
+// Access the value
+console.log(o1()); // Logs 42
 
-   c.$stop();
+// Subscribe to it
+const mySubscription = onChange(newValue => console.log(newValue), o1);
 
+// Update the value
+o1(84);  // Console shows 84
 
-Now remember knockout subscriptions are only triggered when the value of an observable changes. To force a relation to calculate immediately, we can call $fire like so
+// You won't get notified until the value changes (strict equality).
+o1(84);  // Nothing happens.
 
-    var x = C.o(7);
-    var y = C.o(22);
-    var z = C.from(x, y, function(x1, y1){
-      return y1/x1;
-    });
-    z(); //undefined, because neither x nor y have changed
-    z.$fire();
-    z(); //3.14 .... blah ....
+// Stop getting notifications
+mySubscription.unsubscribe();
+```
 
-We can also tell Compute to execute a function everytime an observable changes.
+## `onChange` : React to observable value changes.
 
-    Compute.on(c, function(c1){
-      console.log("C just got set to " + c1);
-    });
+As demonstrated above, `onChange` let's you subscribe to observables. In fact, you can also subscribe to multiple variables.
 
-Or, multiple observables
+```js
+import {observable, onChange} from "Compute";
+const a = observable(1);
+const b = observable(2);
+const c = observable(3);
+const sum = (x, y, z) => console.log(`The sum is ${x + y + z}`);
+onChange(sum, a, b, c); // Nothing happens so far
+a(2); // Console shows "The sum is 7"
+b(3); // Console shows "The sum is 8"
+```
 
-    Compute.on(a, b, c, function(a1, b1, c1){
-      console.log(a1 + "^2 + " + b1 + "^2 = " + c1 + "^2");
-    });
+## `from()` : Define an observable based on the value of other observables.
 
-We also have obervable arrays, and we can define from, and on from them just the same. Or use observables and observable arrays in the same expression.
+```js
+import {observable, onChange, from} from "Compute";
+const a = observable(1);
+const b = observable(2);
+const c = observable(3);
+const getSum = (...values) => values?.reduce(val, x => x + val, 0);
+const sum = from(
+  getSum,
+  a,
+  b,
+  c,
+);
+console.log(sum()); // Prints 6
+a(2);
+console.log(sum()); // Prints 7
 
-In the browser, Compute will automatically use knockout observables (instead of Compute's implementation) if you are using knockout. Then, you can use C.o and C.oa in your knockout viewmodel because C.o and C.oa are actually ko.observable and ko.observableArray.
-Remember you 'don't have to' use knockout to use Compute.
-
-Compute loves the awesome Travis-CI.
+// And because sum is an observable, you can subscribe to it.
+when(sum, x => console.log(x));
+a(3); // Console shows 8
+b(3); // Console shows 9
+c(0); // Console shows 6
+```

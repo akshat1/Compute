@@ -33,17 +33,5 @@ test("Compute", async (t) => {
       console.log("computed is now ", computed());
       assert.strictEqual(computed(), 9);
     });
-
-    // await t1.test("should unsubscribe from the observables when the computed observable is unsubscribed", () => {
-    //   const obs1 = observable(1);
-    //   const obs2 = observable(2);
-    //   const obs3 = observable(3);
-    //   const computed = from((a, b, c) => a + b + c, obs1, obs2, obs3);
-    //   computed.unsubscribe();
-    //   obs1(2);
-    //   obs2(3);
-    //   obs3(4);
-    //   assert.strictEqual(computed(), 6);
-    // });
   });
 });

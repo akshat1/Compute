@@ -1,23 +1,18 @@
 import { SubscriptionManager } from "./SubscriptionManager.js";
 
-/** @typedef {import("./typedefs.js").Observer} Observer */
-/** @typedef {import("./typedefs.js").Observable} Observable */
-/** @typedef {import("./typedefs.js").Subscription} Subscription */
-
 /**
  * Get a new Observable instance intialized with the given value.
  * @param {*} initialValue 
- * @returns {Observable}
+ * @returns {import("./typedefs.js").Observable}
+ * 
+ * @example
+ * const observableOne = observable(1);
+ * const observableTwo = observable(2);
  */
 export function observable(initialValue) {
   let value = initialValue;
   const subscriptionManager = new SubscriptionManager();
 
-  /**
-   * @type {Observable}
-   * @param {*} [newValue] - If specified, the observable will be updated with this value.
-   * @returns {*} - Current value. If newValue is specified, it will return the newValue.
-   */
   function actualObservable (newValue) {
     if (arguments.length) {
       const oldValue = value;
@@ -32,7 +27,7 @@ export function observable(initialValue) {
 
   /**
    * @param {Observer} observer 
-   * @returns {Subscription} - The subscription object which lets you unsubscribe from the observable.
+   * @returns {import("./typedefs.js").Subscription} - The subscription object which lets you unsubscribe from the observable.
    */
   actualObservable.subscribe = (observer) => subscriptionManager.subscribe(observer);
 
@@ -43,5 +38,6 @@ export function observable(initialValue) {
  * @param {*} value 
  * @returns {boolean}
  */
-export const isObservable = (value) =>
-  typeof value === 'function' && typeof value.subscribe === 'function';
+export function isObservable (value) {
+  return typeof value === 'function' && typeof value.subscribe === 'function';
+}

@@ -1,29 +1,27 @@
-/** @typedef {import("./typedefs.js").Subscription} Subscription */
-/** @typedef {import("./typedefs.js").SubscribeFunction} SubscribeFunction */
-/** @typedef {import("./typedefs.js").NotifyFunction} NotifyFunction */
-/** @typedef {import("./typedefs.js").Observer} Observer */
-
 /**
  * @class
- * @description Provides a way to manage subscriptions and notify observers. USed internally by Observable and ObservableList.
- * @property {NotifyFunction} notify
+ * @description Provides a way to manage subscriptions and notify observers. Used internally by Observable and ObservableList, not meant to be used directly.
  */
 export function SubscriptionManager() {
   /**
    * Used to call observers in order.
-   * @type {Subscription[]}
+   * @type {import("./typedefs.js").Subscription[]}
+   * @private
    */
   const subscriptionsList = [];
   /**
    * Used to prevent duplicate subscriptions.
-   * @type {Map<Observer, Subscription>}
+   * @type {Map<import("./typedefs.js").Observer, import("./typedefs.js").Subscription>}
+   * @private
    */
   const subscriptionsMap = new Map();
 
   /**
-   * @property {SubscribeFunction} subscribe
+   * Adds the provided observer to the list of subscriptions, and returns a Subscription object which can be used to unsubscribe from notifications.
+   * @param {import("./typedefs.js").Observer} observer
+   * @returns {import("./typedefs.js").Subscription}
    */
-  const subscribe = (observer) => {
+  this.subscribe = (observer) => {
     if (subscriptionsMap.has(observer)) {
       return subscriptionsMap.get(observer);
     }
@@ -43,14 +41,10 @@ export function SubscriptionManager() {
   };
 
   /**
-   * @property {NotifyFunction} notify
+   * @param {*} newValue
+   * @param {*} oldValue
    */
-  const notify = (newValue, oldValue) => {
+  this.notify = (newValue, oldValue) => {
     subscriptionsList.forEach(subscription => subscription(newValue, oldValue));
   };
-
-  Object.assign(this, {
-    subscribe,
-    notify,
-  });
 }

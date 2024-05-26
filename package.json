@@ -23,6 +23,11 @@
   "scripts": {
     "clean": "rm -rf dist docs",
     "test": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info",
-    "cov-html": "genhtml --output-directory=./coverage lcov.info"
+    "cov-html": "genhtml --output-directory=./coverage lcov.info",
+    "doc": "jsdoc -c jsdoc.conf.json"
+  },
+  "devDependencies": {
+    "jsdoc": "^4.0.3",
+    "jsdoc-tsimport-plugin": "^1.0.5"
   }
 }
