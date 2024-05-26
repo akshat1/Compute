@@ -68,3 +68,21 @@ a(3); // Console shows 8
 b(3); // Console shows 9
 c(0); // Console shows 6
 ```
+
+# Installation
+
+```sh
+npm install compute
+```
+
+Or if you are using yarn,
+
+```sh
+yarn add compute
+```
+
+And then in your code, simply import
+
+```js
+import { compute, onChange, from } from "compute";
+```
