@@ -3,13 +3,12 @@
   "description": "A simple reactive programming library.",
   "keywords": [
     "reactive",
-    "observable",
-    "lambda"
+    "observable"
   ],
   "homepage": "http://akshat1.github.io/compute/",
   "license": "MIT",
   "author": "akshat1",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "main": "dist/compute-debug.js",
   "type": "module",
   "bugs": {
