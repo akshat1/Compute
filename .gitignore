@@ -5,3 +5,6 @@ npm-debug.log
 coverage
 documentation
 bower_components
+docs
+dist
+lcov.info
