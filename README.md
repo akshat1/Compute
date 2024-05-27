@@ -1,4 +1,4 @@
-# Compute [![Build Status](https://travis-ci.org/akshat1/compute.svg?branch=master)](https://travis-ci.org/akshat1/compute)
+# Compute [![Run Tests](https://github.com/akshat1/compute/actions/workflows/run_tests.yml/badge.svg)](https://github.com/akshat1/compute/actions/workflows/run_tests.yml)
 An extremely simple reactive programming library using Observables.
 
 ## Wait, what is an Observable?

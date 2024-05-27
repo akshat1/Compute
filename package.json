@@ -8,7 +8,7 @@
   "homepage": "http://akshat1.github.io/compute/",
   "license": "MIT",
   "author": "akshat1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/compute-debug.js",
   "type": "module",
   "bugs": {
