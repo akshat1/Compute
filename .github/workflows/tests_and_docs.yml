@@ -14,7 +14,7 @@ jobs:
         node-version: [22.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout
       - uses: borales/actions-yarn@v3.0.0
         name: Install Dependencies
@@ -31,8 +31,8 @@ jobs:
           cmd: doc
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         with:
-          # github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./docs
