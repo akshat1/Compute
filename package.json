@@ -8,8 +8,8 @@
   "homepage": "http://akshat1.github.io/compute/",
   "license": "MIT",
   "author": "akshat1",
-  "version": "1.0.1",
-  "main": "dist/compute-debug.js",
+  "version": "1.0.2",
+  "main": "lib/index.js",
   "type": "module",
   "bugs": {
     "url": "https://github.com/akshat1/compute/issues",
@@ -20,7 +20,7 @@
     "url": "https://github.com/akshat1/compute"
   },
   "scripts": {
-    "clean": "rm -rf dist docs",
+    "clean": "rm -rf docs coverage lcov.info",
     "test": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info",
     "cov-html": "genhtml --output-directory=./coverage lcov.info",
     "doc": "jsdoc -c jsdoc.conf.json"
