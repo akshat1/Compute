@@ -1,4 +1,4 @@
-# Compute [![Run Tests](https://github.com/akshat1/compute/actions/workflows/run_tests.yml/badge.svg)](https://github.com/akshat1/compute/actions/workflows/run_tests.yml)
+# Compute [![Run Tests](https://github.com/akshat1/compute/actions/workflows/tests_and_docs.yml/badge.svg)](https://github.com/akshat1/compute/actions/workflows/tests_and_docs.yml)
 An extremely simple reactive programming library using Observables.
 
 ## Wait, what is an Observable?
@@ -86,3 +86,7 @@ And then in your code, simply import
 ```js
 import { compute, onChange, from } from "compute";
 ```
+
+# Docs
+
+You can see the API at https://akshat1.github.io/compute/
